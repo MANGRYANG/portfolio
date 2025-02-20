@@ -39,6 +39,7 @@ export default class StartScene extends Phaser.Scene {
 			(pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
 		map.createLayer("Objects", tileset, (pageWidth - layer_scale * 320) / 2, 
 			(pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-		
+
+		this.cameras.main.setBackgroundColor('#181425');
 	}
 }
