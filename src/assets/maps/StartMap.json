@@ -82,7 +82,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":11,
          "id":4,
-         "name":"Torchs",
+         "name":"Torches",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -672,79 +672,6 @@
                          "type":"bool",
                          "value":true
                         }]
-                },
-            
-                {
-                 "animation":[
-                        {
-                         "duration":100,
-                         "tileid":6996
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":6997
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":6998
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":6999
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7000
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7001
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7002
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7003
-                        }],
-                 "id":6996
-                }, 
-                {
-                 "animation":[
-                        {
-                         "duration":100,
-                         "tileid":7440
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7441
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7442
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7443
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7444
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7445
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7446
-                        }, 
-                        {
-                         "duration":100,
-                         "tileid":7447
-                        }],
-                 "id":7440
                 }],
          "tilewidth":16
         }],
