@@ -1,82 +1,69 @@
-import dungeonTileset from '../src/assets/Dungeon.png'
-import titleImage from '../src/assets/TitleText.png'
-import tilemap from '../src/assets/maps/StartMap.json'
+import titleImageLocation from '../src/assets/TitleText.png';
+import dungeonTilesLocation from '../src/assets/Dungeon.png';
+import startMapLocation from '../src/assets/maps/StartMap.json';
 
 import Phaser from 'phaser';
 
+const pageWidth = document.documentElement.scrollWidth;
+const pageHeight = document.documentElement.scrollHeight;
+
 export default class StartScene extends Phaser.Scene {
-	constructor() {
-		super('start-scene');
-	}
+    constructor() {
+        super('start-scene');
+        this.lastTimeSymbol = 0; // 인스턴스 변수로 이동
+        this.torchesLayer = null;
+    }
 
-	preload() {
-		this.load.image('Dungeon', dungeonTileset);
-		this.load.image('tileset', dungeonTileset);
-		this.load.image('titleText', titleImage);
+    preload() {
+        this.load.image('title_text', titleImageLocation);
+        this.load.image('dungeon_tiles', dungeonTilesLocation);
+        this.load.tilemapTiledJSON('tilemap', startMapLocation);
+    }
 
-		this.load.tilemapTiledJSON('tilemap', tilemap);
-	}
+    create() {
+        const title_scale = pageWidth / (1717 * 2);
+        this.add.image(pageWidth / 2, pageHeight / 8, 'title_text').setScale(title_scale);
 
-	create() {
-		const titleImage = this.add.image(150, -17, 'titleText');
-		titleImage.setDisplaySize(202, 20);
+        const map = this.make.tilemap({ key: 'tilemap' });
+        const tileset = map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
+        const layer_scale = pageWidth / (320 * 2);
 
-		this.map = this.make.tilemap({ key: 'tilemap' });
-		const tileset = this.map.addTilesetImage('Dungeon', 'Dungeon');
+        const floorsLayer = map.createLayer("Floors", tileset, (pageWidth - layer_scale * 320) / 2,
+            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
+        const cracksLayer = map.createLayer("Cracks", tileset, (pageWidth - layer_scale * 320) / 2,
+            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
+        const wallsLayer = map.createLayer("Walls", tileset, (pageWidth - layer_scale * 320) / 2,
+            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
+        const objectsLayer = map.createLayer("Objects", tileset, (pageWidth - layer_scale * 320) / 2,
+            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);	
 
-		this.floorsLayer = this.map.createDynamicLayer('Floors', tileset);
-		this.map.createStaticLayer('Cracks', tileset);
-		this.map.createStaticLayer('Walls', tileset);
-		this.map.createStaticLayer('Torchs', tileset);
-		this.map.createStaticLayer('Objects', tileset);
+        // Animated layer
+        this.torchesLayer = map.createLayer("Torches", tileset, (pageWidth - layer_scale * 320) / 2,
+            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
 
-		this.cameras.main.setZoom(3);
-		this.cameras.main.setBounds(-30, -35, this.map.widthInPixels, this.map.heightInPixels);
-		this.cameras.main.setBackgroundColor('#181425');
+        this.cameras.main.setBackgroundColor('#181425');
+    }
 
-		handleCreateTilesData(this);
-	}
+    update(_time, delta) {
+        // Check per 100ms
+        const currentTimeSymbol = Math.floor(_time / 100) % 8;
+        
+        if (currentTimeSymbol !== this.lastTimeSymbol) {
+            this.torchesLayer.forEachTile(tile => {
+                if (tile.index >= 6997 && tile.index < 7004) {
+                    tile.index += 1;
+                } else if (tile.index === 7004) {
+                    tile.index = 6997; // Repeat animation
+                }
 
-	update(_time, delta) {
-		handleAnimateTiles(this, delta);
-	}
+                if (tile.index >= 7441 && tile.index < 7448) {
+                    tile.index += 1;
+                } else if (tile.index === 7448) {
+                    tile.index = 7441; // Repeat animation
+                }
+            });
+            // Update lastTimeSymbol
+            this.lastTimeSymbol = currentTimeSymbol;
+        }
+    }
 }
-
-export const handleCreateTilesData = (scene) => {
-	scene.animatedTiles = [];
-	const tileData = scene.map.tilesets[0].tileData;
-
-	for (let tileid in tileData) {
-		scene.floorsLayer.data.forEach(tileRow => {
-			tileRow.forEach(tile => {
-				if (tile.index !== -1 && tile.index - scene.map.tilesets[0].firstgid === parseInt(tileid)) {
-					scene.animatedTiles.push({
-						tile,
-						tileAnimationData: tileData[tileid].animation,
-						firstgid: scene.map.tilesets[0].firstgid,
-						elapsedTime: 0,
-					});
-				}
-			});
-		});
-	}
-};
-
-export const handleAnimateTiles = (scene, delta) => {
-	scene.animatedTiles.forEach(tile => {
-		if (!tile.tileAnimationData) return;
-
-		tile.elapsedTime += delta;
-		const totalDuration = tile.tileAnimationData.reduce((sum, frame) => sum + frame.duration, 0);
-		tile.elapsedTime %= totalDuration;
-
-		let cumulativeDuration = 0;
-		for (let i = 0; i < tile.tileAnimationData.length; i++) {
-			cumulativeDuration += tile.tileAnimationData[i].duration;
-			if (tile.elapsedTime < cumulativeDuration) {
-				tile.tile.index = tile.tileAnimationData[i].tileid + tile.firstgid;
-				break;
-			}
-		}
-	});
-};

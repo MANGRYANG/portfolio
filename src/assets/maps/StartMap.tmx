@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="1">
+ <editorsettings>
+  <export target="StartMap.json" format="json"/>
+ </editorsettings>
  <tileset firstgid="1" name="Dungeon" tilewidth="16" tileheight="16" tilecount="8475" columns="113">
   <image source="../Dungeon.png" width="1808" height="1212"/>
   <tile id="3911">
@@ -302,30 +305,6 @@
     <property name="Collision" type="bool" value="true"/>
    </properties>
   </tile>
-  <tile id="6996">
-   <animation>
-    <frame tileid="6996" duration="100"/>
-    <frame tileid="6997" duration="100"/>
-    <frame tileid="6998" duration="100"/>
-    <frame tileid="6999" duration="100"/>
-    <frame tileid="7000" duration="100"/>
-    <frame tileid="7001" duration="100"/>
-    <frame tileid="7002" duration="100"/>
-    <frame tileid="7003" duration="100"/>
-   </animation>
-  </tile>
-  <tile id="7440">
-   <animation>
-    <frame tileid="7440" duration="100"/>
-    <frame tileid="7441" duration="100"/>
-    <frame tileid="7442" duration="100"/>
-    <frame tileid="7443" duration="100"/>
-    <frame tileid="7444" duration="100"/>
-    <frame tileid="7445" duration="100"/>
-    <frame tileid="7446" duration="100"/>
-    <frame tileid="7447" duration="100"/>
-   </animation>
-  </tile>
  </tileset>
  <layer id="1" name="Floors" width="20" height="11">
   <data encoding="csv">
@@ -372,7 +351,7 @@
 4031,3914,3914,3914,3914,3914,3914,3914,3914,3914,3914,3914,3914,3914,3914,3914,3914,3914,3914,4030
 </data>
  </layer>
- <layer id="4" name="Torchs" width="20" height="11">
+ <layer id="4" name="Torches" width="20" height="11">
   <data encoding="csv">
 0,0,6997,0,0,6997,0,0,6997,0,0,6997,0,0,6997,0,0,6997,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
