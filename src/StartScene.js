@@ -1,6 +1,6 @@
-import titleImageLocation from '../src/assets/TitleText.png';
-import dungeonTilesLocation from '../src/assets/Dungeon.png';
-import startMapLocation from '../src/assets/maps/StartMap.json';
+import titleImageLocation from '../assets/TitleText.png';
+import dungeonTilesLocation from '../assets/Dungeon.png';
+import startMapLocation from '../assets/maps/StartMap.json';
 
 import Phaser from 'phaser';
 
@@ -40,7 +40,7 @@ export default class StartScene extends Phaser.Scene {
         // Animated layer
         this.torchesLayer = map.createLayer("Torches", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-
+        
         this.cameras.main.setBackgroundColor('#181425');
     }
 

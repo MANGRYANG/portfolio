@@ -20,4 +20,4 @@ scripts/tsgen/test/output.txt
 plugins/spine*/spine-runtimes/
 
 # Assets
-/src/[Aa]ssets/
+/[Aa]ssets/
