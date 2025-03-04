@@ -1,8 +1,8 @@
 import titleImageLocation from '../assets/TitleText.png';
 import dungeonTilesLocation from '../assets/Dungeon.png';
-import startMapLocation from '../assets/maps/StartMap.json';
-import playerLocation from '../assets/characters/idle.png';
-import playerWalkLocation from '../assets/characters/walk.png';
+import startMapLocation from '../maps/StartMap.json';
+import playerLocation from '../assets/characters/Idle.png';
+import playerWalkLocation from '../assets/characters/Walk.png';
 
 import Phaser from 'phaser';
 
@@ -10,6 +10,7 @@ const pageWidth = document.documentElement.scrollWidth;
 const pageHeight = document.documentElement.scrollHeight;
 const layer_scale = pageWidth / (320 * 2);
 const directions = ['down', 'right', 'up', 'left'];
+const count = 0;
 
 export default class StartScene extends Phaser.Scene {
 
@@ -39,7 +40,7 @@ export default class StartScene extends Phaser.Scene {
 
         const map = this.make.tilemap({ key: 'tilemap' });
         this.map = map;
-        const tileset = map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
+        const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
 
         this.floorsLayer = map.createLayer("Floors", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
@@ -47,18 +48,16 @@ export default class StartScene extends Phaser.Scene {
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
         this.wallsLayer = map.createLayer("Walls", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-        this.objectsLayer = map.createLayer("Objects", tileset, (pageWidth - layer_scale * 320) / 2,
-            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);	
-
-        // Animated layer
         this.torchesLayer = map.createLayer("Torches", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
+        this.objectsLayer = map.createLayer("Objects", tileset, (pageWidth - layer_scale * 320) / 2,
+            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);	
 
         // Add cursors
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // Add player
-        this.player = this.add.sprite(pageWidth / 2 - (16 * 8 + 8) * layer_scale, pageHeight / 2 - (16 * 4) * layer_scale,
+        this.player = this.add.sprite(pageWidth / 2 - (16 * 3 + 8) * layer_scale, pageHeight / 2,
             'player').setScale(layer_scale);
 
         // Create animations
@@ -91,12 +90,21 @@ export default class StartScene extends Phaser.Scene {
 
         if (currentTimeSymbol !== this.lastTimeSymbol) {
             this.torchesLayer.forEachTile(tile => {
-                if (tile.index >= 6989 && tile.index < 6996) {
+                if (tile.index >= 6876 && tile.index < 6883) {
                     tile.index += 1;
-                } else if (tile.index === 6996) {
-                    tile.index = 6989; // Repeat animation
+                } else if (tile.index === 6883) {
+                    tile.index = 6876; // Repeat animation
                 }
             });
+            if (currentTimeSymbol === 0) {
+                this.floorsLayer.forEachTile(tile => {
+                    if (tile.index === 4948) {
+                        tile.index += 1;
+                    } else if (tile.index === 4949) {
+                        tile.index -= 1; // Repeat animation
+                    }
+                });
+            }
             this.lastTimeSymbol = currentTimeSymbol;
 
             this.playerPositionInMap = this.map.worldToTileXY(this.player.x, this.player.y);
@@ -111,7 +119,8 @@ export default class StartScene extends Phaser.Scene {
                 } else if (this.cursors.right.isDown || this.DKey.isDown) {
                     this.player.anims.play('rightWalk', true);
                     this.playerDirection = 1;
-                    if((this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
+                    if((this.playerPositionInMap.x != 19 &&
+                        this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
                         (this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.objectsLayer).index) < 0) {
                         this.startMove(this.tileSize, 0);
                     }
