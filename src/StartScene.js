@@ -9,6 +9,7 @@ import Phaser from 'phaser';
 const pageWidth = document.documentElement.scrollWidth;
 const pageHeight = document.documentElement.scrollHeight;
 const layer_scale = pageWidth / (320 * 2);
+const directions = ['down', 'right', 'up', 'left'];
 
 export default class StartScene extends Phaser.Scene {
 
@@ -17,6 +18,7 @@ export default class StartScene extends Phaser.Scene {
     constructor() {
         super('start-scene');
         this.lastTimeSymbol = 0;
+        this.map = null;
         this.torchesLayer = null;
         this.isMoving = false;
         this.tileSize = layer_scale * 16;
@@ -36,15 +38,16 @@ export default class StartScene extends Phaser.Scene {
         this.add.image(pageWidth / 2, pageHeight / 8, 'title_text').setScale(title_scale);
 
         const map = this.make.tilemap({ key: 'tilemap' });
+        this.map = map;
         const tileset = map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
 
-        const floorsLayer = map.createLayer("Floors", tileset, (pageWidth - layer_scale * 320) / 2,
+        this.floorsLayer = map.createLayer("Floors", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-        const cracksLayer = map.createLayer("Cracks", tileset, (pageWidth - layer_scale * 320) / 2,
+        this.cracksLayer = map.createLayer("Cracks", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-        const wallsLayer = map.createLayer("Walls", tileset, (pageWidth - layer_scale * 320) / 2,
+        this.wallsLayer = map.createLayer("Walls", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-        const objectsLayer = map.createLayer("Objects", tileset, (pageWidth - layer_scale * 320) / 2,
+        this.objectsLayer = map.createLayer("Objects", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);	
 
         // Animated layer
@@ -59,7 +62,6 @@ export default class StartScene extends Phaser.Scene {
             'player').setScale(layer_scale);
 
         // Create animations
-        const directions = ['down', 'right', 'up', 'left'];
         directions.forEach((dir, index) => {
             this.anims.create({
                 key: `${dir}Idle`,
@@ -97,41 +99,38 @@ export default class StartScene extends Phaser.Scene {
             });
             this.lastTimeSymbol = currentTimeSymbol;
 
+            this.playerPositionInMap = this.map.worldToTileXY(this.player.x, this.player.y);
             if (!this.isMoving) {
                 if (this.cursors.down.isDown || this.SKey.isDown) {
                     this.player.anims.play('downWalk', true);
                     this.playerDirection = 0;
-                    this.startMove(0, this.tileSize);
+                    if((this.map.getTileAt(this.playerPositionInMap.x, this.playerPositionInMap.y + 1, true, this.floorsLayer).index) > 0 &&
+                        (this.map.getTileAt(this.playerPositionInMap.x, this.playerPositionInMap.y + 1, true, this.objectsLayer).index) < 0) {
+                        this.startMove(0, this.tileSize);
+                    }
                 } else if (this.cursors.right.isDown || this.DKey.isDown) {
                     this.player.anims.play('rightWalk', true);
                     this.playerDirection = 1;
-                    this.startMove(this.tileSize, 0);
+                    if((this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
+                        (this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.objectsLayer).index) < 0) {
+                        this.startMove(this.tileSize, 0);
+                    }
                 } else if (this.cursors.up.isDown || this.WKey.isDown) {
                     this.player.anims.play('upWalk', true);
                     this.playerDirection = 2;
-                    this.startMove(0, -this.tileSize);
+                    if((this.map.getTileAt(this.playerPositionInMap.x, this.playerPositionInMap.y - 1, true, this.floorsLayer).index) > 0 &&
+                        (this.map.getTileAt(this.playerPositionInMap.x, this.playerPositionInMap.y - 1, true, this.objectsLayer).index) < 0) {
+                        this.startMove(0, -this.tileSize);
+                    }
                 } else if (this.cursors.left.isDown || this.AKey.isDown) {
                     this.player.anims.play('leftWalk', true);
                     this.playerDirection = 3;
-                    this.startMove(-this.tileSize, 0);
-                } else {
-                    switch(this.playerDirection) {
-                        case 1:
-                            this.player.anims.play('rightIdle', true);
-                            break;
-
-                        case 2:
-                            this.player.anims.play('upIdle', true);
-                            break;
-                        
-                        case 3:
-                            this.player.anims.play('leftIdle', true);
-                            break;
-
-                        default:
-                            this.player.anims.play('downIdle', true);
-                            break;
+                    if((this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
+                        (this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.objectsLayer).index) < 0) {
+                        this.startMove(-this.tileSize, 0);
                     }
+                } else {
+                    this.player.anims.play(`${directions[[this.playerDirection]]}Idle`, true);
                 }
             }
         }
