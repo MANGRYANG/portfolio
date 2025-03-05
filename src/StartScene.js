@@ -41,7 +41,7 @@ export default class StartScene extends Phaser.Scene {
 
         const map = this.make.tilemap({ key: 'startMap' });
         this.map = map;
-        const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
+        const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles");
 
         this.floorsLayer = map.createLayer("Floors", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
