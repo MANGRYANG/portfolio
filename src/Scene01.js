@@ -32,7 +32,7 @@ export default class Scene01 extends Phaser.Scene {
         this.load.spritesheet('playerWalk', playerWalkLocation, { frameWidth: 32, frameHeight: 32 });
     }
 
-    create() {
+    create(data) {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
         this.input.enabled = true;
         
@@ -60,10 +60,19 @@ export default class Scene01 extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // Add player
-        this.player = this.add.sprite(pageWidth / 2 - (16 * 9 + 8) * layer_scale, pageHeight / 2 + (16 * 5),
+
+        if (!data.wasLeftPortal) {
+            this.player = this.add.sprite(pageWidth / 2 - (16 * 9 + 8) * layer_scale, pageHeight / 2 + (16 * 5),
             'playerIdle').setScale(layer_scale);
 
-        this.playerDirection = 1;
+            this.playerDirection = data.playerDirectionIndex;
+        }
+        else {
+            this.player = this.add.sprite(pageWidth / 2 + (16 * 9 + 8) * layer_scale, pageHeight / 2 + (16 * 3),
+            'playerIdle').setScale(layer_scale);
+
+            this.playerDirection = data.playerDirectionIndex;
+        }
 
         // Create animations
         directions.forEach((dir, index) => {
@@ -170,7 +179,7 @@ export default class Scene01 extends Phaser.Scene {
                         this.input.enabled = false;
                         this.cameras.main.fadeOut(1000, 0, 0, 0);
                         this.scene.stop();
-                        this.scene.start('start-scene');
+                        this.scene.start('scene-01', {wasLeftPortal : false, playerDirectionIndex: this.playerDirection});
                     }
                     else {
                         if((this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
@@ -192,7 +201,7 @@ export default class Scene01 extends Phaser.Scene {
                         this.input.enabled = false;
                         this.cameras.main.fadeOut(1000, 0, 0, 0);
                         this.scene.stop();
-                        this.scene.start('start-scene');
+                        this.scene.start('start-scene', {wasLeftPortal : true, playerDirectionIndex: this.playerDirection});
                     }
                     else {
                         if((this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
@@ -232,7 +241,7 @@ export default class Scene01 extends Phaser.Scene {
             callback: () => {
                 this.cameras.main.resetFX();
                 this.scene.stop();
-                this.scene.start('start-scene');
+                this.scene.start('start-scene', {wasLeftPortal : false, playerDirectionIndex : 0});
             }
         });
     }
