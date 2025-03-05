@@ -41,7 +41,7 @@ export default class Scene01 extends Phaser.Scene {
 
         const map = this.make.tilemap({ key: 'map01' });
         this.map = map;
-        const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles");
+        const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
 
         this.floorsLayer = map.createLayer("Floors", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
@@ -92,9 +92,8 @@ export default class Scene01 extends Phaser.Scene {
 
     update(_time, delta) {
         const currentTimeSymbol = Math.floor(_time / 100) % 8;
-        
-        this.playerPositionInMap = this.map.worldToTileXY(this.player.x, this.player.y);
-        const currentTrapTile = this.map.getTileAt(this.playerPositionInMap.x, this.playerPositionInMap.y, true, this.trapsLayer);
+
+        const currentTrapTile = this.map.getTileAt(this.map.worldToTileXY(this.player.x, this.player.y).x, this.map.worldToTileXY(this.player.x, this.player.y).y, true, this.trapsLayer);
 
         if (currentTimeSymbol !== this.lastTimeSymbol) {
             // Player death
@@ -155,6 +154,7 @@ export default class Scene01 extends Phaser.Scene {
             }
             this.lastTimeSymbol = currentTimeSymbol;
 
+            this.playerPositionInMap = this.map.worldToTileXY(this.player.x, this.player.y);
             if (!this.isMoving) {
                 if (this.cursors.down.isDown || this.SKey.isDown) {
                     this.player.anims.play('downWalk', true);
@@ -166,14 +166,11 @@ export default class Scene01 extends Phaser.Scene {
                 } else if (this.cursors.right.isDown || this.DKey.isDown) {
                     this.player.anims.play('rightWalk', true);
                     this.playerDirection = 1;
-                    if(this.playerPositionInMap.x == 19) {
+                    if(this.playerPositionInMap.x === 19) {
                         this.input.enabled = false;
                         this.cameras.main.fadeOut(1000, 0, 0, 0);
-                        this.scene.transition({ target: 'start-scene', duration: 1 });
-
-                        this.cameras.main.once('camerafadeoutcomplete', function () {
-                            this.sceneTransitioning = false;
-                        }, this);
+                        this.scene.stop();
+                        this.scene.start('start-scene');
                     }
                     else {
                         if((this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
@@ -191,14 +188,11 @@ export default class Scene01 extends Phaser.Scene {
                 } else if (this.cursors.left.isDown || this.AKey.isDown) {
                     this.player.anims.play('leftWalk', true);
                     this.playerDirection = 3;
-                    if(this.playerPositionInMap.x == 0) {
+                    if(this.playerPositionInMap.x === 0) {
                         this.input.enabled = false;
                         this.cameras.main.fadeOut(1000, 0, 0, 0);
-                        this.scene.transition({ target: 'start-scene', duration: 1 });
-
-                        this.cameras.main.once('camerafadeoutcomplete', function () {
-                            this.sceneTransitioning = false;
-                        }, this);
+                        this.scene.stop();
+                        this.scene.start('start-scene');
                     }
                     else {
                         if((this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
