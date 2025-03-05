@@ -41,7 +41,7 @@ export default class Scene01 extends Phaser.Scene {
 
         const map = this.make.tilemap({ key: 'map01' });
         this.map = map;
-        const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
+        const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles");
 
         this.floorsLayer = map.createLayer("Floors", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
@@ -92,8 +92,16 @@ export default class Scene01 extends Phaser.Scene {
 
     update(_time, delta) {
         const currentTimeSymbol = Math.floor(_time / 100) % 8;
+        
+        this.playerPositionInMap = this.map.worldToTileXY(this.player.x, this.player.y);
+        const currentTrapTile = this.map.getTileAt(this.playerPositionInMap.x, this.playerPositionInMap.y, true, this.trapsLayer);
 
         if (currentTimeSymbol !== this.lastTimeSymbol) {
+            // Player death
+            if((currentTrapTile.index >= 5409 && currentTrapTile.index <= 5414) || (currentTrapTile.index >= 5522 && currentTrapTile.index <= 5527)) {
+                this.playerDeath();
+            }
+
             this.torchesLayer.forEachTile(tile => {
                 if (tile.index >= 6876 && tile.index < 6883) {
                     tile.index += 1;
@@ -147,7 +155,6 @@ export default class Scene01 extends Phaser.Scene {
             }
             this.lastTimeSymbol = currentTimeSymbol;
 
-            this.playerPositionInMap = this.map.worldToTileXY(this.player.x, this.player.y);
             if (!this.isMoving) {
                 if (this.cursors.down.isDown || this.SKey.isDown) {
                     this.player.anims.play('downWalk', true);
@@ -216,6 +223,22 @@ export default class Scene01 extends Phaser.Scene {
             duration: 160,
             onComplete: () => {
                 this.isMoving = false;
+            }
+        });
+    }
+
+    playerDeath ()
+    {
+        this.input.enabled = false;
+        this.cameras.main.fadeOut(200, 0, 0, 0);
+        this.cameras.main.shake(200, 0.01);
+
+        this.time.addEvent({
+            delay: 200,
+            callback: () => {
+                this.cameras.main.resetFX();
+                this.scene.stop();
+                this.scene.start('start-scene');
             }
         });
     }
