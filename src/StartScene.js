@@ -41,7 +41,7 @@ export default class StartScene extends Phaser.Scene {
 
         const map = this.make.tilemap({ key: 'startMap' });
         this.map = map;
-        const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles");
+        const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
 
         this.floorsLayer = map.createLayer("Floors", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
@@ -125,11 +125,8 @@ export default class StartScene extends Phaser.Scene {
                     if(this.playerPositionInMap.x == 19) {
                         this.input.enabled = false;
                         this.cameras.main.fadeOut(1000, 0, 0, 0);
-                        this.scene.transition({ target: 'scene-01', duration: 1 });
-
-                        this.cameras.main.once('camerafadeoutcomplete', function () {
-                            this.sceneTransitioning = false;
-                        }, this);
+                        this.scene.stop();
+                        this.scene.start('scene-01');
                     }
                     else {
                         if((this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
