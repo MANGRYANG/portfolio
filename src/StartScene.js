@@ -32,7 +32,7 @@ export default class StartScene extends Phaser.Scene {
         this.load.spritesheet('playerWalk', playerWalkLocation, { frameWidth: 32, frameHeight: 32 });
     }
 
-    create() {
+    create(data) {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
         this.input.enabled = true;
         
@@ -58,10 +58,18 @@ export default class StartScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // Add player
-        this.player = this.add.sprite(pageWidth / 2 - (16 * 3 + 8) * layer_scale, pageHeight / 2,
+        if(!data.wasLeftPortal) {
+            this.player = this.add.sprite(pageWidth / 2 - (16 * 3 + 8) * layer_scale, pageHeight / 2,
             'playerIdle').setScale(layer_scale);
 
-        this.playerDirection = 0;
+            this.playerDirection = 0;
+        }
+        else {
+            this.player = this.add.sprite(pageWidth / 2 + (16 * 9 + 8) * layer_scale, pageHeight / 2,
+            'playerIdle').setScale(layer_scale);
+
+            this.playerDirection = data.playerDirectionIndex;
+        }
 
         // Create animations
         directions.forEach((dir, index) => {
@@ -126,7 +134,7 @@ export default class StartScene extends Phaser.Scene {
                         this.input.enabled = false;
                         this.cameras.main.fadeOut(1000, 0, 0, 0);
                         this.scene.stop();
-                        this.scene.start('scene-01');
+                        this.scene.start('scene-01', {wasLeftPortal: false, playerDirectionIndex: this.playerDirection});
                     }
                     else {
                         if((this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
