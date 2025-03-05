@@ -1,6 +1,6 @@
 import titleImageLocation from '../assets/TitleText.png';
 import dungeonTilesLocation from '../assets/Dungeon.png';
-import startMapLocation from '../maps/StartMap.json';
+import map01Location from '../maps/Map01.json';
 import playerLocation from '../assets/characters/Idle.png';
 import playerWalkLocation from '../assets/characters/Walk.png';
 
@@ -11,12 +11,12 @@ const pageHeight = document.documentElement.scrollHeight;
 const layer_scale = pageWidth / (320 * 2);
 const directions = ['down', 'right', 'up', 'left'];
 
-export default class StartScene extends Phaser.Scene {
+export default class Scene01 extends Phaser.Scene {
 
     WKey; AKey; SKey; DKey;
 
     constructor() {
-        super('start-scene');
+        super('scene-01');
         this.lastTimeSymbol = 0;
         this.map = null;
         this.torchesLayer = null;
@@ -27,7 +27,7 @@ export default class StartScene extends Phaser.Scene {
     preload() {
         this.load.image('title_text', titleImageLocation);
         this.load.image('dungeon_tiles', dungeonTilesLocation);
-        this.load.tilemapTiledJSON('startMap', startMapLocation);
+        this.load.tilemapTiledJSON('map01', map01Location);
         this.load.spritesheet('playerIdle', playerLocation, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerWalk', playerWalkLocation, { frameWidth: 32, frameHeight: 32 });
     }
@@ -39,17 +39,19 @@ export default class StartScene extends Phaser.Scene {
         const title_scale = pageWidth / (1717 * 2);
         this.add.image(pageWidth / 2, pageHeight / 8, 'title_text').setScale(title_scale);
 
-        const map = this.make.tilemap({ key: 'startMap' });
+        const map = this.make.tilemap({ key: 'map01' });
         this.map = map;
         const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
 
         this.floorsLayer = map.createLayer("Floors", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-        this.cracksLayer = map.createLayer("Cracks", tileset, (pageWidth - layer_scale * 320) / 2,
-            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
         this.wallsLayer = map.createLayer("Walls", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
         this.torchesLayer = map.createLayer("Torches", tileset, (pageWidth - layer_scale * 320) / 2,
+            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
+        this.waterfallsLayer = map.createLayer("Waterfalls", tileset, (pageWidth - layer_scale * 320) / 2,
+            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
+        this.trapsLayer = map.createLayer("Traps", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
         this.objectsLayer = map.createLayer("Objects", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);	
@@ -58,10 +60,10 @@ export default class StartScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // Add player
-        this.player = this.add.sprite(pageWidth / 2 - (16 * 3 + 8) * layer_scale, pageHeight / 2,
+        this.player = this.add.sprite(pageWidth / 2 - (16 * 9 + 8) * layer_scale, pageHeight / 2 + (16 * 5),
             'playerIdle').setScale(layer_scale);
 
-        this.playerDirection = 0;
+        this.playerDirection = 1;
 
         // Create animations
         directions.forEach((dir, index) => {
@@ -99,6 +101,41 @@ export default class StartScene extends Phaser.Scene {
                     tile.index = 6876; // Repeat animation
                 }
             });
+
+            this.waterfallsLayer.forEachTile(tile => {
+                if ((tile.index >= 4955 && tile.index < 4962) || (tile.index >= 5068 && tile.index < 5075)) {
+                    tile.index += 1;
+                } else if (tile.index === 4962) {
+                    tile.index = 4955; // Repeat animation
+                } else if (tile.index === 5075) {
+                    tile.index = 5068; // Repeat animation
+                }
+            });
+
+            this.trapsLayer.forEachTile(tile => {
+                if ((tile.index >= 5407 && tile.index < 5414) || (tile.index >= 5520 && tile.index < 5535)) {
+                    tile.index += 1;
+                } else if (tile.index === 5414) {
+                    tile.index = 5407; // Repeat animation
+                } else if (tile.index === 5535) {
+                    tile.index = 5520; // Repeat animation
+                }
+            });
+            
+            if (currentTimeSymbol % 2 === 0) {
+                this.objectsLayer.forEachTile(tile => {
+                    if (tile.index >= 6650 && tile.index < 6657) {
+                        tile.index += 1;
+                    } else if (tile.index > 6181 && tile.index <= 6196) {
+                        tile.index -= 1;
+                    } else if (tile.index === 6657) {
+                        tile.index = 6650; // Repeat animation
+                    } else if (tile.index === 6181) {
+                        tile.index = 6196; // Repeat animation
+                    }
+                });
+            }
+
             if (currentTimeSymbol === 0) {
                 this.floorsLayer.forEachTile(tile => {
                     if (tile.index === 4948) {
@@ -125,7 +162,7 @@ export default class StartScene extends Phaser.Scene {
                     if(this.playerPositionInMap.x == 19) {
                         this.input.enabled = false;
                         this.cameras.main.fadeOut(1000, 0, 0, 0);
-                        this.scene.transition({ target: 'scene-01', duration: 1 });
+                        this.scene.transition({ target: 'start-scene', duration: 1 });
 
                         this.cameras.main.once('camerafadeoutcomplete', function () {
                             this.sceneTransitioning = false;
@@ -147,9 +184,20 @@ export default class StartScene extends Phaser.Scene {
                 } else if (this.cursors.left.isDown || this.AKey.isDown) {
                     this.player.anims.play('leftWalk', true);
                     this.playerDirection = 3;
-                    if((this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
-                        (this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.objectsLayer).index) < 0) {
-                        this.startMove(-this.tileSize, 0);
+                    if(this.playerPositionInMap.x == 0) {
+                        this.input.enabled = false;
+                        this.cameras.main.fadeOut(1000, 0, 0, 0);
+                        this.scene.transition({ target: 'start-scene', duration: 1 });
+
+                        this.cameras.main.once('camerafadeoutcomplete', function () {
+                            this.sceneTransitioning = false;
+                        }, this);
+                    }
+                    else {
+                        if((this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
+                            (this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.objectsLayer).index) < 0) {
+                            this.startMove(-this.tileSize, 0);
+                        }
                     }
                 } else {
                     this.player.anims.play(`${directions[[this.playerDirection]]}Idle`, true);
