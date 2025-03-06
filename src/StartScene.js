@@ -34,7 +34,6 @@ export default class StartScene extends Phaser.Scene {
 
     create(data) {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
-        this.input.enabled = true;
         
         const title_scale = pageWidth / (1717 * 2);
         this.add.image(pageWidth / 2, pageHeight / 8, 'title_text').setScale(title_scale);
@@ -131,7 +130,6 @@ export default class StartScene extends Phaser.Scene {
                     this.player.anims.play('rightWalk', true);
                     this.playerDirection = 1;
                     if(this.playerPositionInMap.x == 19) {
-                        this.input.enabled = false;
                         this.cameras.main.fadeOut(1000, 0, 0, 0);
                         this.scene.stop();
                         this.scene.start('scene-01', {wasLeftPortal: false, playerDirectionIndex: this.playerDirection});

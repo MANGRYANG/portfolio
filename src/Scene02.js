@@ -1,6 +1,6 @@
 import titleImageLocation from '../assets/TitleText.png';
 import dungeonTilesLocation from '../assets/Dungeon.png';
-import map01Location from '../maps/Map01.json';
+import map02Location from '../maps/Map02.json';
 import playerLocation from '../assets/characters/Idle.png';
 import playerWalkLocation from '../assets/characters/Walk.png';
 
@@ -11,12 +11,12 @@ const pageHeight = document.documentElement.scrollHeight;
 const layer_scale = pageWidth / (320 * 2);
 const directions = ['down', 'right', 'up', 'left'];
 
-export default class Scene01 extends Phaser.Scene {
+export default class Scene02 extends Phaser.Scene {
 
     WKey; AKey; SKey; DKey;
 
     constructor() {
-        super('scene-01');
+        super('scene-02');
         this.lastTimeSymbol = 0;
         this.map = null;
         this.torchesLayer = null;
@@ -27,7 +27,7 @@ export default class Scene01 extends Phaser.Scene {
     preload() {
         this.load.image('title_text', titleImageLocation);
         this.load.image('dungeon_tiles', dungeonTilesLocation);
-        this.load.tilemapTiledJSON('map01', map01Location);
+        this.load.tilemapTiledJSON('map02', map02Location);
         this.load.spritesheet('playerIdle', playerLocation, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerWalk', playerWalkLocation, { frameWidth: 32, frameHeight: 32 });
     }
@@ -38,7 +38,7 @@ export default class Scene01 extends Phaser.Scene {
         const title_scale = pageWidth / (1717 * 2);
         this.add.image(pageWidth / 2, pageHeight / 8, 'title_text').setScale(title_scale);
 
-        const map = this.make.tilemap({ key: 'map01' });
+        const map = this.make.tilemap({ key: 'map02' });
         this.map = map;
         const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
 
@@ -53,20 +53,22 @@ export default class Scene01 extends Phaser.Scene {
         this.trapsLayer = map.createLayer("Traps", tileset, (pageWidth - layer_scale * 320) / 2,
             (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
         this.objectsLayer = map.createLayer("Objects", tileset, (pageWidth - layer_scale * 320) / 2,
-            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);	
+            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
+
+        this.trapsLayer.setY(this.trapsLayer.y - 16);
 
         // Add cursors
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // Add player
         if (!data.wasLeftPortal) {
-            this.player = this.add.sprite(pageWidth / 2 - (16 * 9 + 8) * layer_scale, pageHeight / 2 + (16 * 4),
+            this.player = this.add.sprite(pageWidth / 2 - (16 * 9 + 8) * layer_scale, pageHeight / 2 + (16 * 2),
             'playerIdle').setScale(layer_scale);
 
             this.playerDirection = data.playerDirectionIndex;
         }
         else {
-            this.player = this.add.sprite(pageWidth / 2 + (16 * 9 + 8) * layer_scale, pageHeight / 2 + (16 * 2),
+            this.player = this.add.sprite(pageWidth / 2 + (16 * 9 + 8) * layer_scale, pageHeight / 2 + (16 * 3),
             'playerIdle').setScale(layer_scale);
 
             this.playerDirection = data.playerDirectionIndex;
@@ -109,56 +111,25 @@ export default class Scene01 extends Phaser.Scene {
             }
 
             this.torchesLayer.forEachTile(tile => {
-                if (tile.index >= 6876 && tile.index < 6883) {
+                if ((tile.index >= 3753 && tile.index < 3768) || (tile.index >= 6876 && tile.index < 6883)) {
                     tile.index += 1;
+                } else if (tile.index === 3768) {
+                    tile.index = 3753; // Repeat animation
                 } else if (tile.index === 6883) {
                     tile.index = 6876; // Repeat animation
                 }
             });
 
             this.waterfallsLayer.forEachTile(tile => {
-                if ((tile.index >= 4955 && tile.index < 4962) || (tile.index >= 5068 && tile.index < 5075)) {
+                if ((tile.index >= 8049 && tile.index < 8064) || (tile.index >= 8161 && tile.index < 8177)) {
                     tile.index += 1;
-                } else if (tile.index === 4962) {
-                    tile.index = 4955; // Repeat animation
-                } else if (tile.index === 5075) {
-                    tile.index = 5068; // Repeat animation
+                } else if (tile.index === 8064) {
+                    tile.index = 8049; // Repeat animation
+                } else if (tile.index === 8177) {
+                    tile.index = 8161; // Repeat animation
                 }
             });
 
-            this.trapsLayer.forEachTile(tile => {
-                if ((tile.index >= 5407 && tile.index < 5414) || (tile.index >= 5520 && tile.index < 5535)) {
-                    tile.index += 1;
-                } else if (tile.index === 5414) {
-                    tile.index = 5407; // Repeat animation
-                } else if (tile.index === 5535) {
-                    tile.index = 5520; // Repeat animation
-                }
-            });
-            
-            if (currentTimeSymbol % 2 === 0) {
-                this.objectsLayer.forEachTile(tile => {
-                    if (tile.index >= 6650 && tile.index < 6657) {
-                        tile.index += 1;
-                    } else if (tile.index > 6181 && tile.index <= 6196) {
-                        tile.index -= 1;
-                    } else if (tile.index === 6657) {
-                        tile.index = 6650; // Repeat animation
-                    } else if (tile.index === 6181) {
-                        tile.index = 6196; // Repeat animation
-                    }
-                });
-            }
-
-            if (currentTimeSymbol === 0) {
-                this.floorsLayer.forEachTile(tile => {
-                    if (tile.index === 4948) {
-                        tile.index += 1;
-                    } else if (tile.index === 4949) {
-                        tile.index -= 1; // Repeat animation
-                    }
-                });
-            }
             this.lastTimeSymbol = currentTimeSymbol;
 
             this.playerPositionInMap = this.map.worldToTileXY(this.player.x, this.player.y);
@@ -197,7 +168,7 @@ export default class Scene01 extends Phaser.Scene {
                     if(this.playerPositionInMap.x === 0) {
                         this.cameras.main.fadeOut(1000, 0, 0, 0);
                         this.scene.stop();
-                        this.scene.start('start-scene', {wasLeftPortal : true, playerDirectionIndex: this.playerDirection});
+                        this.scene.start('scene-01', {wasLeftPortal : true, playerDirectionIndex: this.playerDirection});
                     }
                     else {
                         if((this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
