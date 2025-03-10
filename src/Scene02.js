@@ -1,214 +1,136 @@
-import titleImageLocation from '../assets/TitleText.png';
-import dungeonTilesLocation from '../assets/Dungeon.png';
-import map02Location from '../maps/Map02.json';
-import playerLocation from '../assets/characters/Idle.png';
-import playerWalkLocation from '../assets/characters/Walk.png';
+// Scene01.js
+import phaser from 'phaser';
+import image from './Image.js';
+import map from './Map.js';
+import player from './Player.js';
 
-import Phaser from 'phaser';
+const titleImageURL = "../assets/TitleImageTexture.png";
+const playerIdleURL = '../assets/characters/Idle.png';
+const playerWalkURL = '../assets/characters/Walk.png';
+const dungeonTilesURL = '../assets/Dungeon.png';
+const map02URL = '../maps/Map02.json';
 
 const pageWidth = document.documentElement.scrollWidth;
 const pageHeight = document.documentElement.scrollHeight;
-const layer_scale = pageWidth / (320 * 2);
-const directions = ['down', 'right', 'up', 'left'];
+const scale = pageWidth / (320 * 2);
 
-export default class Scene02 extends Phaser.Scene {
-
-    WKey; AKey; SKey; DKey;
-
+export default class Scene01 extends phaser.Scene {
     constructor() {
         super('scene-02');
-        this.lastTimeSymbol = 0;
         this.map = null;
-        this.torchesLayer = null;
-        this.isMoving = false;
-        this.tileSize = layer_scale * 16;
+        this.lastTimeSymbol = 0;
+        this.tileSize = scale * 16;
     }
 
     preload() {
-        this.load.image('title_text', titleImageLocation);
-        this.load.image('dungeon_tiles', dungeonTilesLocation);
-        this.load.tilemapTiledJSON('map02', map02Location);
-        this.load.spritesheet('playerIdle', playerLocation, { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('playerWalk', playerWalkLocation, { frameWidth: 32, frameHeight: 32 });
+        this.loadAssets();
+    }
+
+    loadAssets() {
+        this.load.image('title_image', titleImageURL);
+        this.load.image('dungeon_tiles', dungeonTilesURL);
+        this.load.tilemapTiledJSON('map02', map02URL);
+        this.load.spritesheet('playerIdle', playerIdleURL, { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('playerWalk', playerWalkURL, { frameWidth: 32, frameHeight: 32 });
     }
 
     create(data) {
-        this.cameras.main.fadeIn(1000, 0, 0, 0);
-        
-        const title_scale = pageWidth / (1717 * 2);
-        this.add.image(pageWidth / 2, pageHeight / 8, 'title_text').setScale(title_scale);
-
-        const map = this.make.tilemap({ key: 'map02' });
-        this.map = map;
-        const tileset = this.map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
-
-        this.floorsLayer = map.createLayer("Floors", tileset, (pageWidth - layer_scale * 320) / 2,
-            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-        this.wallsLayer = map.createLayer("Walls", tileset, (pageWidth - layer_scale * 320) / 2,
-            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-        this.torchesLayer = map.createLayer("Torches", tileset, (pageWidth - layer_scale * 320) / 2,
-            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-        this.waterfallsLayer = map.createLayer("Waterfalls", tileset, (pageWidth - layer_scale * 320) / 2,
-            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-        this.trapsLayer = map.createLayer("Traps", tileset, (pageWidth - layer_scale * 320) / 2,
-            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-        this.objectsLayer = map.createLayer("Objects", tileset, (pageWidth - layer_scale * 320) / 2,
-            (pageHeight - layer_scale * 172) / 2).setScale(layer_scale);
-
-        this.trapsLayer.setY(this.trapsLayer.y - 16);
-
-        // Add cursors
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-        // Add player
-        if (!data.wasLeftPortal) {
-            this.player = this.add.sprite(pageWidth / 2 - (16 * 9 + 8) * layer_scale, pageHeight / 2 + (16 * 2),
-            'playerIdle').setScale(layer_scale);
-
-            this.playerDirection = data.playerDirectionIndex;
-        }
-        else {
-            this.player = this.add.sprite(pageWidth / 2 + (16 * 9 + 8) * layer_scale, pageHeight / 2 + (16 * 3),
-            'playerIdle').setScale(layer_scale);
-
-            this.playerDirection = data.playerDirectionIndex;
-        }
-
-        // Create animations
-        directions.forEach((dir, index) => {
-            this.anims.create({
-                key: `${dir}Idle`,
-                frames: this.anims.generateFrameNumbers('playerIdle', { start: index * 8, end: (index + 1) * 8 - 1 }),
-                frameRate: 10,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: `${dir}Walk`,
-                frames: this.anims.generateFrameNumbers('playerWalk', { start: index * 8, end: (index + 1) * 8 - 1 }),
-                frameRate: 10,
-                repeat: -1
-            });
-        });
-
-        this.WKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-        this.AKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.SKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        this.DKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-
+        this.setupScene(data);
+        this.initializePlayer(data);
+        this.setupKeyboardInput();
         this.cameras.main.setBackgroundColor('#181425');
+    }
+
+    setupScene(data) {
+        this.cameras.main.fadeIn(1000, 0, 0, 0);
+        this.titleImage = new image(this, pageWidth / 2, pageHeight / 8, 'title_image', pageWidth / (1717 * 2));
+        this.titleImage.create();
+        this.map = new map(this, 'map02', scale);
+        this.map.createMap();
+    }
+
+    initializePlayer(data) {
+        const playerPosition = (data.portalDirection === 3) ? { x: 19, y: 6 } : { x: 0, y: 6 };
+        this.player = new player(this, playerPosition.x, playerPosition.y, data.playerDirection, scale);
+        this.player.create();
+        this.player.idleAnimation(data.playerDirection);
+    }
+
+    setupKeyboardInput() {
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.w_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.W);
+        this.a_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.A);
+        this.s_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.S);
+        this.d_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.D);
     }
 
     update(_time, delta) {
         const currentTimeSymbol = Math.floor(_time / 100) % 8;
 
-        const currentTrapTile = this.map.getTileAt(this.map.worldToTileXY(this.player.x, this.player.y).x, this.map.worldToTileXY(this.player.x, this.player.y).y, true, this.trapsLayer);
-
         if (currentTimeSymbol !== this.lastTimeSymbol) {
-            // Player death
-            if((currentTrapTile.index >= 5409 && currentTrapTile.index <= 5414) || (currentTrapTile.index >= 5522 && currentTrapTile.index <= 5527)) {
-                this.playerDeath();
+            this.map.updateMap(currentTimeSymbol);
+            const currentTileIndex = this.map.getTileIndexAt(this.player.x, this.player.y, this.map.objectsLayer);
+            // Check player's death
+            if((currentTileIndex >= 5409 && currentTileIndex <= 5414) ||
+                (currentTileIndex >= 5522 && currentTileIndex <= 5527)) {
+                    this.cameras.main.fadeOut(200, 0, 0, 0);
+                    this.cameras.main.shake(200, 0.01);
+                    this.time.addEvent({
+                    delay: 200,
+                    callback: () => {
+                        this.cameras.main.resetFX();
+                        this.scene.stop();
+                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection : undefined });
+                    }
+                });
             }
-
-            this.torchesLayer.forEachTile(tile => {
-                if ((tile.index >= 3753 && tile.index < 3768) || (tile.index >= 6876 && tile.index < 6883)) {
-                    tile.index += 1;
-                } else if (tile.index === 3768) {
-                    tile.index = 3753; // Repeat animation
-                } else if (tile.index === 6883) {
-                    tile.index = 6876; // Repeat animation
-                }
-            });
-
-            this.waterfallsLayer.forEachTile(tile => {
-                if ((tile.index >= 8049 && tile.index < 8064) || (tile.index >= 8161 && tile.index < 8177)) {
-                    tile.index += 1;
-                } else if (tile.index === 8064) {
-                    tile.index = 8049; // Repeat animation
-                } else if (tile.index === 8177) {
-                    tile.index = 8161; // Repeat animation
-                }
-            });
-
             this.lastTimeSymbol = currentTimeSymbol;
+            this.handlePlayerMovement();
+        }
+    }
 
-            this.playerPositionInMap = this.map.worldToTileXY(this.player.x, this.player.y);
-            if (!this.isMoving) {
-                if (this.cursors.down.isDown || this.SKey.isDown) {
-                    this.player.anims.play('downWalk', true);
-                    this.playerDirection = 0;
-                    if((this.map.getTileAt(this.playerPositionInMap.x, this.playerPositionInMap.y + 1, true, this.floorsLayer).index) > 0 &&
-                        (this.map.getTileAt(this.playerPositionInMap.x, this.playerPositionInMap.y + 1, true, this.objectsLayer).index) < 0) {
-                        this.startMove(0, this.tileSize);
-                    }
-                } else if (this.cursors.right.isDown || this.DKey.isDown) {
-                    this.player.anims.play('rightWalk', true);
-                    this.playerDirection = 1;
-                    if(this.playerPositionInMap.x === 19) {
-                        this.cameras.main.fadeOut(1000, 0, 0, 0);
-                        this.scene.stop();
-                        this.scene.start('scene-02', {wasLeftPortal : false, playerDirectionIndex: this.playerDirection});
-                    }
-                    else {
-                        if((this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
-                            (this.map.getTileAt(this.playerPositionInMap.x + 1, this.playerPositionInMap.y, true, this.objectsLayer).index) < 0) {
-                            this.startMove(this.tileSize, 0);
-                        }
-                    }
-                } else if (this.cursors.up.isDown || this.WKey.isDown) {
-                    this.player.anims.play('upWalk', true);
-                    this.playerDirection = 2;
-                    if((this.map.getTileAt(this.playerPositionInMap.x, this.playerPositionInMap.y - 1, true, this.floorsLayer).index) > 0 &&
-                        (this.map.getTileAt(this.playerPositionInMap.x, this.playerPositionInMap.y - 1, true, this.objectsLayer).index) < 0) {
-                        this.startMove(0, -this.tileSize);
-                    }
-                } else if (this.cursors.left.isDown || this.AKey.isDown) {
-                    this.player.anims.play('leftWalk', true);
-                    this.playerDirection = 3;
-                    if(this.playerPositionInMap.x === 0) {
-                        this.cameras.main.fadeOut(1000, 0, 0, 0);
-                        this.scene.stop();
-                        this.scene.start('scene-01', {wasLeftPortal : true, playerDirectionIndex: this.playerDirection});
-                    }
-                    else {
-                        if((this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.floorsLayer).index) > 0 &&
-                            (this.map.getTileAt(this.playerPositionInMap.x - 1, this.playerPositionInMap.y, true, this.objectsLayer).index) < 0) {
-                            this.startMove(-this.tileSize, 0);
-                        }
-                    }
-                } else {
-                    this.player.anims.play(`${directions[[this.playerDirection]]}Idle`, true);
-                }
+    handlePlayerMovement() {
+        if (!this.player.isMoving) {
+            const tileX = this.player.x;
+            const tileY = this.player.y;
+
+            if (this.cursors.down.isDown || this.s_Key.isDown) {
+                this.movePlayer(0, 1, tileX, tileY);
+            } else if (this.cursors.right.isDown || this.d_Key.isDown) {
+                this.movePlayer(1, 0, tileX, tileY, 'scene-02', { portalDirection: 1, playerDirection : this.getDirection(1, 0) });
+            } else if (this.cursors.up.isDown || this.w_Key.isDown) {
+                this.movePlayer(0, -1, tileX, tileY);
+            } else if (this.cursors.left.isDown || this.a_Key.isDown) {
+                this.movePlayer(-1, 0, tileX, tileY, 'scene-01', { portalDirection: 3, playerDirection : this.getDirection(-1, 0) });
+            } else {
+                this.player.idleAnimation();
             }
         }
     }
 
-    startMove(deltaX, deltaY) {
-        this.isMoving = true;
+    movePlayer(dx, dy, tileX, tileY, sceneKey, sceneData) {
+        this.player.direction = this.getDirection(dx, dy);
+        this.player.walkAnimation();
 
-        this.tweens.add({
-            targets: this.player,
-            x: this.player.x + deltaX,
-            y: this.player.y + deltaY,
-            duration: 160,
-            onComplete: () => {
-                this.isMoving = false;
-            }
-        });
+        if (this.canMove(tileX + dx, tileY + dy)) {
+            this.player.move(dx, dy);
+        } else if ((dx === 1 && tileX === 19) || (dx === -1 && tileX === 0)) { // Check for scene transition
+            this.cameras.main.fadeOut(1000, 0, 0, 0);
+            this.scene.stop();
+            this.scene.start(sceneKey, sceneData);
+        }
     }
 
-    playerDeath ()
-    {
-        this.cameras.main.fadeOut(200, 0, 0, 0);
-        this.cameras.main.shake(200, 0.01);
+    canMove(targetX, targetY) {
+        const wallTileIndex = this.map.getTileIndexAt(targetX, targetY, this.map.wallsLayer);
+        return (!(wallTileIndex === 1)) && (targetX > -1 && targetX < 20) && (targetY > -1 && targetY < 11);
+    }
 
-        this.time.addEvent({
-            delay: 200,
-            callback: () => {
-                this.cameras.main.resetFX();
-                this.scene.stop();
-                this.scene.start('start-scene', {wasLeftPortal : false, playerDirectionIndex : 0});
-            }
-        });
+    getDirection(dx, dy) {
+        if (dy > 0) return 0; // Down
+        if (dx > 0) return 1; // Right
+        if (dy < 0) return 2; // Up
+        if (dx < 0) return 3; // Left
+        return -1; // Idle
     }
 }
