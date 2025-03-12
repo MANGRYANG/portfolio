@@ -1,6 +1,6 @@
 // Player.js
-const pageWidth = document.documentElement.scrollWidth;
-const pageHeight = document.documentElement.scrollHeight;
+const pageWidth = 800;
+const pageHeight = 600;
 
 const directions = ['down', 'right', 'up', 'left'];
 

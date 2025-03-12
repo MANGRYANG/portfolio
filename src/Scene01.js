@@ -1,18 +1,19 @@
 // Scene01.js
 import phaser from 'phaser';
-import image from './Image.js';
+import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
 
-const titleImageURL = "../assets/TitleImageTexture.png";
+const titleFontPngURL = '../assets/font/font.png';
+const titleFontXmlURL = '../assets/font/font.xml';
 const playerIdleURL = '../assets/characters/Idle.png';
 const playerWalkURL = '../assets/characters/Walk.png';
 const dungeonTilesURL = '../assets/Dungeon.png';
 const map01URL = '../maps/Map01.json';
 
-const pageWidth = document.documentElement.scrollWidth;
-const pageHeight = document.documentElement.scrollHeight;
-const scale = pageWidth / (320 * 2);
+const pageWidth = 800;
+const pageHeight = 600;
+const scale = 2;
 
 export default class Scene01 extends phaser.Scene {
     constructor() {
@@ -27,7 +28,7 @@ export default class Scene01 extends phaser.Scene {
     }
 
     loadAssets() {
-        this.load.image('title_image', titleImageURL);
+        this.load.bitmapFont('pixelFont', titleFontPngURL, titleFontXmlURL);
         this.load.image('dungeon_tiles', dungeonTilesURL);
         this.load.tilemapTiledJSON('map01', map01URL);
         this.load.spritesheet('playerIdle', playerIdleURL, { frameWidth: 32, frameHeight: 32 });
@@ -43,8 +44,8 @@ export default class Scene01 extends phaser.Scene {
 
     setupScene(data) {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
-        this.titleImage = new image(this, pageWidth / 2, pageHeight / 8, 'title_image', pageWidth / (1717 * 2));
-        this.titleImage.create();
+        this.titleText = new text(this, pageWidth / 2, pageHeight / 4 - (16 * 5 + 8), 'pixelFont', "Mangryang's Dungeon", 64, 0);
+        this.titleText.create();
         this.map = new map(this, 'map01', scale);
         this.map.createMap();
     }
@@ -62,6 +63,7 @@ export default class Scene01 extends phaser.Scene {
         this.a_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.A);
         this.s_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.S);
         this.d_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.D);
+        this.space_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.SPACE);
     }
 
     update(_time, delta) {

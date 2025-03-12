@@ -1,18 +1,19 @@
 // Scene01.js
 import phaser from 'phaser';
-import image from './Image.js';
+import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
 
-const titleImageURL = "../assets/TitleImageTexture.png";
+const titleFontPngURL = '../assets/font/font.png';
+const titleFontXmlURL = '../assets/font/font.xml';
 const playerIdleURL = '../assets/characters/Idle.png';
-const playerWalkURL = '../assets/characters/Walk.png';
+const playerWalkURL = '../assets/charactereachs/Walk.png';
 const dungeonTilesURL = '../assets/Dungeon.png';
 const map02URL = '../maps/Map02.json';
 
-const pageWidth = document.documentElement.scrollWidth;
-const pageHeight = document.documentElement.scrollHeight;
-const scale = pageWidth / (320 * 2);
+const pageWidth = 800;
+const pageHeight = 600;
+const scale = 2;
 
 export default class Scene01 extends phaser.Scene {
     constructor() {
@@ -27,7 +28,7 @@ export default class Scene01 extends phaser.Scene {
     }
 
     loadAssets() {
-        this.load.image('title_image', titleImageURL);
+        this.load.bitmapFont('pixelFont', titleFontPngURL, titleFontXmlURL);
         this.load.image('dungeon_tiles', dungeonTilesURL);
         this.load.tilemapTiledJSON('map02', map02URL);
         this.load.spritesheet('playerIdle', playerIdleURL, { frameWidth: 32, frameHeight: 32 });
@@ -43,8 +44,8 @@ export default class Scene01 extends phaser.Scene {
 
     setupScene(data) {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
-        this.titleImage = new image(this, pageWidth / 2, pageHeight / 8, 'title_image', pageWidth / (1717 * 2));
-        this.titleImage.create();
+        this.titleText = new text(this, pageWidth / 2, pageHeight / 4 - (16 * 5 + 8), 'pixelFont', "Mangryang's Dungeon", 64, 0);
+        this.titleText.create();
         this.map = new map(this, 'map02', scale);
         this.map.createMap();
     }
