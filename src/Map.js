@@ -1,6 +1,6 @@
 // Map.js
-const pageWidth = document.documentElement.scrollWidth;
-const pageHeight = document.documentElement.scrollHeight;
+const pageWidth = 800;
+const pageHeight = 600;
 
 export default class gameMap {
     constructor(scene, key, scale) {
@@ -76,5 +76,10 @@ export default class gameMap {
         const tile = layer.getTileAt(x, y);
         // If tile exists, return its index; otherwise return -1 or any other default value
         return tile ? tile.index : -1;
+    }
+
+    setTileIndexAt(x, y, layer, newIndex) {
+        const tile = layer.getTileAt(x, y);
+        tile.index = newIndex;
     }
 }

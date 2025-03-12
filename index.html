@@ -10,14 +10,22 @@
 		body {
 			margin: 0;
 			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
+  			align-items: center;
+  			justify-content: center;
+            width: 100%;
+            height: 100%;
 			background-color: #181425;
+			overflow: hidden;			
 		}
 		#app {
-			width: document.documentElement.scrollWidth;
-			height: document.documentElement.scrollHeight;
+ 			width: 100vw;
+    		height: 100vh;
+			position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+			overflow: hidden;
+			image-rendering: crisp-edges;
 		}
 	</style>
 </head>
