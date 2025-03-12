@@ -1,5 +1,4 @@
 // Scene01.js
-import phaser from 'phaser';
 import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
@@ -8,6 +7,7 @@ const titleFontPngURL = '../assets/font/font.png';
 const titleFontXmlURL = '../assets/font/font.xml';
 const playerIdleURL = '../assets/characters/Idle.png';
 const playerWalkURL = '../assets/characters/Walk.png';
+const playerRaiseURL = '../assets/characters/Raise.png';
 const dungeonTilesURL = '../assets/Dungeon.png';
 const map01URL = '../maps/Map01.json';
 
@@ -15,12 +15,13 @@ const pageWidth = 800;
 const pageHeight = 600;
 const scale = 2;
 
-export default class Scene01 extends phaser.Scene {
+export default class Scene01 extends Phaser.Scene {
     constructor() {
         super('scene-01');
         this.map = null;
         this.lastTimeSymbol = 0;
         this.tileSize = scale * 16;
+        this.textLogs = [];
     }
 
     preload() {
@@ -33,6 +34,7 @@ export default class Scene01 extends phaser.Scene {
         this.load.tilemapTiledJSON('map01', map01URL);
         this.load.spritesheet('playerIdle', playerIdleURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerWalk', playerWalkURL, { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('playerRaise', playerRaiseURL, { frameWidth: 32, frameHeight: 32 });
     }
 
     create(data) {
@@ -59,11 +61,11 @@ export default class Scene01 extends phaser.Scene {
 
     setupKeyboardInput() {
         this.cursors = this.input.keyboard.createCursorKeys();
-        this.w_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.W);
-        this.a_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.A);
-        this.s_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.S);
-        this.d_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.D);
-        this.space_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.w_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.a_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.s_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.d_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.space_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     }
 
     update(_time, delta) {
@@ -82,14 +84,57 @@ export default class Scene01 extends phaser.Scene {
                     callback: () => {
                         this.cameras.main.resetFX();
                         this.scene.stop();
-                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection : undefined });
+                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined });
                     }
                 });
             }
             this.lastTimeSymbol = currentTimeSymbol;
+            this.handlePlayerInteraction();
             this.handlePlayerMovement();
         }
     }
+
+    handlePlayerInteraction() {
+        // Interaction with key
+        if (this.player.x === 13 && this.player.y === 1 &&
+            this.map.getTileIndexAt(13, 1, this.map.objectsLayer) >= 6181 &&
+            this.map.getTileIndexAt(13, 1, this.map.objectsLayer) <= 6196) {
+            
+            this.player.direction = 0;
+
+            this.player.raiseAnimation();
+            this.map.setTileIndexAt(13, 1, this.map.objectsLayer, 0);
+
+                if (this.textLogs.length >= 5) {
+                    const removedText = this.textLogs.shift();
+                    if (removedText.text) {
+                        removedText.textMessage = '';
+                        removedText.text.destroy();
+                    }
+
+                    this.textLogs.forEach(textLog => {
+                        textLog.worldY -= 16;
+                        if (textLog.text) {
+                            textLog.text.y -= 16;
+                        }
+                    });
+                }
+
+                const message = 'You found a key!! Let\'s find the treasure chest that matches the key.';
+                const offsetY = this.textLogs.length * 16;
+                const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+
+                this.newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
+                this.newTextLog.typeCreate();
+                this.textLogs.push(this.newTextLog);
+
+            this.interaction = true;
+
+        } else {
+            this.interaction = false;
+        }
+    }
+
 
     handlePlayerMovement() {
         if (!this.player.isMoving) {
@@ -99,7 +144,7 @@ export default class Scene01 extends phaser.Scene {
             if (this.cursors.down.isDown || this.s_Key.isDown) {
                 this.movePlayer(0, 1, tileX, tileY);
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
-                this.movePlayer(1, 0, tileX, tileY, 'scene-02', { portalDirection: 1, playerDirection : this.getDirection(1, 0) });
+                this.movePlayer(1, 0, tileX, tileY, 'scene-02', { portalDirection: 1, playerDirection: this.getDirection(1, 0) });
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
                 this.movePlayer(0, -1, tileX, tileY);
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {

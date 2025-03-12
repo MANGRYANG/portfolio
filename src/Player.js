@@ -44,6 +44,13 @@ export default class Player {
                 repeat: -1
             });
         });
+
+        this.scene.anims.create({
+            key: 'raise',
+            frames: this.scene.anims.generateFrameNumbers('playerRaise', { start: 0, end: 7}),
+            frameRate: 10,
+            repeat: 0
+        });
     }
 
     idleAnimation() {
@@ -52,6 +59,17 @@ export default class Player {
 
     walkAnimation() {
         this.playAnimation('Walk');
+    }
+
+    raiseAnimation(callback) {
+        this.isMoving = true;
+        this.sprite.anims.play('raise', true);
+
+        this.sprite.on('animationcomplete', () => {
+            this.isMoving = false;
+            this.idleAnimation();
+            if (callback) callback();
+        });
     }
 
     playAnimation(action) {
@@ -75,5 +93,13 @@ export default class Player {
         this.isMoving = false;
         this.x += deltaX;
         this.y += deltaY;
+    }
+
+    raise() {
+        this.scene.tweens.add({
+            targets: this.sprite,
+            duration: 160,
+            onComplete: () => this.idleAnimation()
+        });
     }
 }

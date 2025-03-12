@@ -1,5 +1,4 @@
 // StartScene.js
-import phaser from 'phaser';
 import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
@@ -8,6 +7,7 @@ const titleFontPngURL = '../assets/font/font.png';
 const titleFontXmlURL = '../assets/font/font.xml';
 const playerIdleURL = '../assets/characters/Idle.png';
 const playerWalkURL = '../assets/characters/Walk.png';
+const playerRaiseURL = '../assets/characters/Raise.png';
 const dungeonTilesURL = '../assets/Dungeon.png';
 const startMapURL = '../maps/StartMap.json';
 
@@ -15,7 +15,7 @@ const pageWidth = 800;
 const pageHeight = 600;
 const scale = 2;
 
-export default class StartScene extends phaser.Scene {
+export default class StartScene extends Phaser.Scene {
     constructor() {
         super('start-scene');
         this.map = null;
@@ -34,16 +34,17 @@ export default class StartScene extends phaser.Scene {
         this.load.tilemapTiledJSON('startMap', startMapURL);
         this.load.spritesheet('playerIdle', playerIdleURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerWalk', playerWalkURL, { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('playerRaise', playerRaiseURL, { frameWidth: 32, frameHeight: 32 });
     }
 
     create(data) {
-        this.setupScene();
+        this.setupScene(data);
         this.initializePlayer(data);
         this.setupKeyboardInput();
         this.cameras.main.setBackgroundColor('#181425');
     }
 
-    setupScene() {
+    setupScene(data) {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
         this.titleText = new text(this, pageWidth / 2, pageHeight / 4 - (16 * 5 + 8), 'pixelFont', "Mangryang's Dungeon", 64, 0);
         this.titleText.create();
@@ -61,11 +62,11 @@ export default class StartScene extends phaser.Scene {
 
     setupKeyboardInput() {
         this.cursors = this.input.keyboard.createCursorKeys();
-        this.w_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.W);
-        this.a_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.A);
-        this.s_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.S);
-        this.d_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.D);
-        this.space_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.w_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.a_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.s_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.d_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.space_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     }
 
     update(_time, delta) {
@@ -106,12 +107,12 @@ export default class StartScene extends phaser.Scene {
                 });
             }
 
-            const message = 'Notice: You can open the treasure chests with the keys throughout Dungeon to see my portfolio!!';
+            const message = 'Notice: You can open the treasure chests with the keys throughout Dungeon to see my portfolio.';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
             this.newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
-            this.newTextLog.typeCreate('');
+            this.newTextLog.typeCreate();
             this.textLogs.push(this.newTextLog);
 
         } else if (!this.space_Key.isDown && (this.map.getTileIndexAt(15, 2, this.map.objectsLayer) === 4171)) {
@@ -148,6 +149,10 @@ export default class StartScene extends phaser.Scene {
         if (this.canMove(tileX + dx, tileY + dy)) {
             this.player.move(dx, dy);
         } else if (dx === 1 && tileX === 19) { // Check for scene transition
+            this.textLogs.forEach(textLog => {
+                textLog.textMessage = '';
+            });
+            this.textLogs = [];
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.scene.stop();
             this.scene.start(sceneKey, sceneData);
