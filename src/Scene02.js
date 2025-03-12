@@ -1,5 +1,4 @@
 // Scene01.js
-import phaser from 'phaser';
 import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
@@ -8,6 +7,7 @@ const titleFontPngURL = '../assets/font/font.png';
 const titleFontXmlURL = '../assets/font/font.xml';
 const playerIdleURL = '../assets/characters/Idle.png';
 const playerWalkURL = '../assets/charactereachs/Walk.png';
+const playerRaiseURL = '../assets/characters/Raise.png';
 const dungeonTilesURL = '../assets/Dungeon.png';
 const map02URL = '../maps/Map02.json';
 
@@ -15,7 +15,7 @@ const pageWidth = 800;
 const pageHeight = 600;
 const scale = 2;
 
-export default class Scene01 extends phaser.Scene {
+export default class Scene01 extends Phaser.Scene {
     constructor() {
         super('scene-02');
         this.map = null;
@@ -33,6 +33,7 @@ export default class Scene01 extends phaser.Scene {
         this.load.tilemapTiledJSON('map02', map02URL);
         this.load.spritesheet('playerIdle', playerIdleURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerWalk', playerWalkURL, { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('playerRaise', playerRaiseURL, { frameWidth: 32, frameHeight: 32 });
     }
 
     create(data) {
@@ -48,6 +49,7 @@ export default class Scene01 extends phaser.Scene {
         this.titleText.create();
         this.map = new map(this, 'map02', scale);
         this.map.createMap();
+        this.textLogs = data.textLogs;
     }
 
     initializePlayer(data) {
@@ -59,10 +61,10 @@ export default class Scene01 extends phaser.Scene {
 
     setupKeyboardInput() {
         this.cursors = this.input.keyboard.createCursorKeys();
-        this.w_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.W);
-        this.a_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.A);
-        this.s_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.S);
-        this.d_Key = this.input.keyboard.addKey(phaser.Input.Keyboard.KeyCodes.D);
+        this.w_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.a_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.s_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.d_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     }
 
     update(_time, delta) {

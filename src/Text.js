@@ -16,7 +16,8 @@ export default class Text {
         this.text = this.scene.add.bitmapText(this.worldX, this.worldY, this.key, this.textMessage, this.textSize).setOrigin((this.align === 1) ? 0 : 0.5);
     }
 
-    typeCreate(currentText) {
+    typeCreate() {
+        let currentText = '';
         let idx = currentText.length;
 
         const typeNextCharacter = () => {
@@ -31,7 +32,7 @@ export default class Text {
                 idx++;
 
                 this.scene.time.addEvent({
-                    delay: 30,
+                    delay: 25,
                     callback: typeNextCharacter,
                     callbackScope: this
                 });
