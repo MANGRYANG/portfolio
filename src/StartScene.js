@@ -21,7 +21,6 @@ export default class StartScene extends Phaser.Scene {
         this.map = null;
         this.lastTimeSymbol = 0;
         this.tileSize = scale * 16;
-        this.textLogs = [];
     }
 
     preload() {
@@ -42,6 +41,19 @@ export default class StartScene extends Phaser.Scene {
         this.initializePlayer(data);
         this.setupKeyboardInput();
         this.cameras.main.setBackgroundColor('#181425');
+
+        this.input.keyboard.on('keydown-L', (event) => {
+            if (this.input.keyboard.checkDown(this.ctrl_Key)) {
+                event.preventDefault();
+                this.textLogs.forEach(textLog => {
+                    if (textLog.text) {
+                        textLog.textMessage = '';
+                        textLog.text.destroy();
+                    }
+                });
+                this.textLogs = [];
+            }
+        });
     }
 
     setupScene(data) {
@@ -50,6 +62,14 @@ export default class StartScene extends Phaser.Scene {
         this.titleText.create();
         this.map = new map(this, 'startMap', scale);
         this.map.createMap();
+        this.textLogs = [];
+        if(data.textLogs != undefined) {
+            data.textLogs.forEach(textLog => {
+                let log = new text(this, textLog.worldX, textLog.worldY, 'pixelFont', textLog.textMessage, 16, 1);
+                log.create();
+                this.textLogs.push(log);
+            });
+        }
     }
 
     initializePlayer(data) {
@@ -66,7 +86,9 @@ export default class StartScene extends Phaser.Scene {
         this.a_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.s_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.d_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.l_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
         this.space_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.ctrl_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL);
     }
 
     update(_time, delta) {
@@ -131,7 +153,7 @@ export default class StartScene extends Phaser.Scene {
             if (this.cursors.down.isDown || this.s_Key.isDown) {
                 this.movePlayer(0, 1, tileX, tileY);
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
-                this.movePlayer(1, 0, tileX, tileY, 'scene-01', { portalDirection: 1, playerDirection: this.getDirection(1, 0) });
+                this.movePlayer(1, 0, tileX, tileY, 'scene-01', { portalDirection: 1, playerDirection: this.getDirection(1, 0), textLogs: this.textLogs });
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
                 this.movePlayer(0, -1, tileX, tileY);
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {
@@ -149,10 +171,6 @@ export default class StartScene extends Phaser.Scene {
         if (this.canMove(tileX + dx, tileY + dy)) {
             this.player.move(dx, dy);
         } else if (dx === 1 && tileX === 19) { // Check for scene transition
-            this.textLogs.forEach(textLog => {
-                textLog.textMessage = '';
-            });
-            this.textLogs = [];
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.scene.stop();
             this.scene.start(sceneKey, sceneData);
