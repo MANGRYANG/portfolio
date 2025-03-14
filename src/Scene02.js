@@ -41,6 +41,19 @@ export default class Scene01 extends Phaser.Scene {
         this.initializePlayer(data);
         this.setupKeyboardInput();
         this.cameras.main.setBackgroundColor('#181425');
+
+        this.input.keyboard.on('keydown-L', (event) => {
+            if (this.input.keyboard.checkDown(this.ctrl_Key)) {
+                event.preventDefault();
+                this.textLogs.forEach(textLog => {
+                    if (textLog.text) {
+                        textLog.textMessage = '';
+                        textLog.text.destroy();
+                    }
+                });
+                this.textLogs = [];
+            }
+        });
     }
 
     setupScene(data) {
@@ -49,7 +62,15 @@ export default class Scene01 extends Phaser.Scene {
         this.titleText.create();
         this.map = new map(this, 'map02', scale);
         this.map.createMap();
-        this.textLogs = data.textLogs;
+        this.keyCollection = data.keyCollection;
+        this.textLogs = [];
+        if(data.textLogs != undefined) {
+            data.textLogs.forEach(textLog => {
+                let log = new text(this, textLog.worldX, textLog.worldY, 'pixelFont', textLog.textMessage, 16, 1);
+                log.create();
+                this.textLogs.push(log);
+            });
+        }
     }
 
     initializePlayer(data) {
@@ -65,6 +86,9 @@ export default class Scene01 extends Phaser.Scene {
         this.a_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.s_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.d_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.l_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
+        this.space_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.ctrl_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL);
     }
 
     update(_time, delta) {
@@ -72,21 +96,6 @@ export default class Scene01 extends Phaser.Scene {
 
         if (currentTimeSymbol !== this.lastTimeSymbol) {
             this.map.updateMap(currentTimeSymbol);
-            const currentTileIndex = this.map.getTileIndexAt(this.player.x, this.player.y, this.map.objectsLayer);
-            // Check player's death
-            if((currentTileIndex >= 5409 && currentTileIndex <= 5414) ||
-                (currentTileIndex >= 5522 && currentTileIndex <= 5527)) {
-                    this.cameras.main.fadeOut(200, 0, 0, 0);
-                    this.cameras.main.shake(200, 0.01);
-                    this.time.addEvent({
-                    delay: 200,
-                    callback: () => {
-                        this.cameras.main.resetFX();
-                        this.scene.stop();
-                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection : undefined });
-                    }
-                });
-            }
             this.lastTimeSymbol = currentTimeSymbol;
             this.handlePlayerMovement();
         }
@@ -100,11 +109,11 @@ export default class Scene01 extends Phaser.Scene {
             if (this.cursors.down.isDown || this.s_Key.isDown) {
                 this.movePlayer(0, 1, tileX, tileY);
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
-                this.movePlayer(1, 0, tileX, tileY, 'scene-02', { portalDirection: 1, playerDirection : this.getDirection(1, 0) });
+                this.movePlayer(1, 0, tileX, tileY);
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
                 this.movePlayer(0, -1, tileX, tileY);
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {
-                this.movePlayer(-1, 0, tileX, tileY, 'scene-01', { portalDirection: 3, playerDirection : this.getDirection(-1, 0) });
+                this.movePlayer(-1, 0, tileX, tileY, 'scene-01', { portalDirection: 3, playerDirection : this.getDirection(-1, 0), textLogs: this.textLog, keyCollection: this.keyCollection });
             } else {
                 this.player.idleAnimation();
             }
@@ -117,7 +126,7 @@ export default class Scene01 extends Phaser.Scene {
 
         if (this.canMove(tileX + dx, tileY + dy)) {
             this.player.move(dx, dy);
-        } else if ((dx === 1 && tileX === 19) || (dx === -1 && tileX === 0)) { // Check for scene transition
+        } else if (dx === -1 && tileX === 0) { // Check for scene transition
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.scene.stop();
             this.scene.start(sceneKey, sceneData);
@@ -126,7 +135,10 @@ export default class Scene01 extends Phaser.Scene {
 
     canMove(targetX, targetY) {
         const wallTileIndex = this.map.getTileIndexAt(targetX, targetY, this.map.wallsLayer);
-        return (!(wallTileIndex === 1)) && (targetX > -1 && targetX < 20) && (targetY > -1 && targetY < 11);
+        if(targetX === 20) {return false;}
+        else {
+            return (!(wallTileIndex === 1)) && (targetX > -1 && targetX < 20) && (targetY > -1 && targetY < 11);
+        }
     }
 
     getDirection(dx, dy) {
