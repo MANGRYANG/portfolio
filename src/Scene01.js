@@ -59,20 +59,7 @@ export default class Scene01 extends Phaser.Scene {
             if (this.input.keyboard.checkDown(this.ctrl_Key)) {
                 event.preventDefault();
 
-                if (this.textLogs.length >= 5) {
-                    const removedText = this.textLogs.shift();
-                    if (removedText.text) {
-                        removedText.textMessage = '';
-                        removedText.text.destroy();
-                    }
-
-                    this.textLogs.forEach(textLog => {
-                        textLog.worldY -= 16;
-                        if (textLog.text) {
-                            textLog.text.y -= 16;
-                        }
-                    });
-                }
+                this.checkTextLogRenewal();
 
                 let keysCollected = [];
                 const keyNames = ["Red key", "Blue key", "Green key", "Golden key", "Silver key"];
@@ -159,37 +146,21 @@ export default class Scene01 extends Phaser.Scene {
     }
 
     handlePlayerInteraction() {
-        // Interaction with key
         if (!this.player.isMoving && !this.interaction &&
             this.player.x === 13 && this.player.y === 1 &&
-            this.map.getTileIndexAt(13, 1, this.map.objectsLayer) >= 6181 &&
-            this.map.getTileIndexAt(13, 1, this.map.objectsLayer) <= 6196) {
+            !this.keyCollection[3]) { // When the player collects the golden key
             
             this.interaction = true;
             
             this.player.direction = 0;
-
             this.player.raiseAnimation();
-
+            
             this.map.setTileIndexAt(13, 1, this.map.objectsLayer, 0);
             this.keyCollection[3] = true;
 
-            if (this.textLogs.length >= 5) {
-                const removedText = this.textLogs.shift();
-                if (removedText.text) {
-                    removedText.textMessage = '';
-                    removedText.text.destroy();
-                }
+            this.player.isMoving = true; // Stop player's moving
 
-                this.textLogs.forEach(textLog => {
-                    textLog.worldY -= 16;
-                    if (textLog.text) {
-                        textLog.text.y -= 16;
-                    }
-                });
-            }
-
-            const message = 'You found a golden key!! Let\'s find the treasure chest that matches the key.';
+            const message = 'You found a golden key!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -197,29 +168,19 @@ export default class Scene01 extends Phaser.Scene {
             newTextLog.typeCreate();
             this.textLogs.push(newTextLog);
 
-        } else if (!this.player.isMoving && !this.interaction &&
+        } else if (!this.interaction &&
             this.player.x === 6 && this.player.y === 3 &&
-            this.space_Key.isDown && this.player.direction === 2 &&
-            this.map.getTileIndexAt(6, 2, this.map.objectsLayer) === 3825) {
-                this.interaction = true;
-                if(this.keyCollection[3]) {   // player got a golden key
-                    this.map.setTileIndexAt(6, 2, this.map.objectsLayer, 3826); // open the chest
+            this.space_Key.isDown && this.player.direction === 2) {
 
-                    if (this.textLogs.length >= 5) {
-                        const removedText = this.textLogs.shift();
-                        if (removedText.text) {
-                            removedText.textMessage = '';
-                            removedText.text.destroy();
-                            }
+            this.interaction = true;
 
-                        this.textLogs.forEach(textLog => {
-                            textLog.worldY -= 16;
-                            if (textLog.text) {
-                                textLog.text.y -= 16;
-                            }
-                        });
-                    }
-                    
+            if (this.map.getTileIndexAt(6, 2, this.map.objectsLayer) === 3825) {
+                this.checkTextLogRenewal();
+                if (this.keyCollection[3]) { // When a player attempts to open a treasure chest with a golden key
+                    this.map.setTileIndexAt(6, 2, this.map.objectsLayer, 3826); // Open a cheset
+                    this.player.isMoving = true; // Stop player's moving
+                    this.player.idleAnimation();
+
                     const message = 'Opening the treasure chest ...';
                     const offsetY = this.textLogs.length * 16;
                     const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
@@ -227,23 +188,8 @@ export default class Scene01 extends Phaser.Scene {
                     let newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
                     newTextLog.typeCreate();
                     this.textLogs.push(newTextLog);
-                } else {
-                    if (this.textLogs.length >= 5) {
-                        const removedText = this.textLogs.shift();
-                        if (removedText.text) {
-                            removedText.textMessage = '';
-                            removedText.text.destroy();
-                            }
-
-                        this.textLogs.forEach(textLog => {
-                            textLog.worldY -= 16;
-                            if (textLog.text) {
-                                textLog.text.y -= 16;
-                            }
-                        });
-                    }
-                    
-                    const message = 'Unable to open the test ... T^T';
+                } else {  // When a player attempts to open a treasure chest without a golden key
+                    const message = 'Unable to open the chest ... T^T';
                     const offsetY = this.textLogs.length * 16;
                     const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -251,6 +197,20 @@ export default class Scene01 extends Phaser.Scene {
                     newTextLog.typeCreate();
                     this.textLogs.push(newTextLog);
                 }
+            } else if (this.map.getTileIndexAt(6, 2, this.map.objectsLayer) === 3938) { // When the player closes the treasure chest
+                this.checkTextLogRenewal();
+                this.map.setTileIndexAt(6, 2, this.map.objectsLayer, 3939); // Close a chest
+                this.player.isMoving = false; // Player can move
+
+                const message = 'Closing the treasure chest ...';
+                const offsetY = this.textLogs.length * 16;
+                const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+
+                let newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
+                newTextLog.typeCreate();
+                this.textLogs.push(newTextLog);
+            }
+
         } else {
             this.interaction = false;
         }
@@ -300,5 +260,22 @@ export default class Scene01 extends Phaser.Scene {
         if (dy < 0) return 2; // Up
         if (dx < 0) return 3; // Left
         return -1; // Idle
+    }
+
+    checkTextLogRenewal() {
+        if (this.textLogs.length >= 5) {
+            const removedText = this.textLogs.shift();
+            if (removedText.text) {
+                removedText.textMessage = '';
+                removedText.text.destroy();
+            }
+
+            this.textLogs.forEach(textLog => {
+                textLog.worldY -= 16;
+                if (textLog.text) {
+                    textLog.text.y -= 16;
+                }
+            });
+        }
     }
 }
