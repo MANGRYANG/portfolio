@@ -10,6 +10,7 @@ const config = {
 	pixelArt: true,
 	antialias: false,
 	scene: [StartScene, Scene01, Scene02],
+	parent: 'app',
 }
 
 export default new Phaser.Game(config)

@@ -96,39 +96,73 @@ export default class Scene01 extends Phaser.Scene {
 
     handlePlayerInteraction() {
         // Interaction with key
-        if (this.player.x === 13 && this.player.y === 1 &&
+        if (!this.player.isMoving && !this.interaction &&
+            this.player.x === 13 && this.player.y === 1 &&
             this.map.getTileIndexAt(13, 1, this.map.objectsLayer) >= 6181 &&
             this.map.getTileIndexAt(13, 1, this.map.objectsLayer) <= 6196) {
+            
+            this.interaction = true;
             
             this.player.direction = 0;
 
             this.player.raiseAnimation();
             this.map.setTileIndexAt(13, 1, this.map.objectsLayer, 0);
 
-                if (this.textLogs.length >= 5) {
-                    const removedText = this.textLogs.shift();
-                    if (removedText.text) {
-                        removedText.textMessage = '';
-                        removedText.text.destroy();
-                    }
-
-                    this.textLogs.forEach(textLog => {
-                        textLog.worldY -= 16;
-                        if (textLog.text) {
-                            textLog.text.y -= 16;
-                        }
-                    });
+            if (this.textLogs.length >= 5) {
+                const removedText = this.textLogs.shift();
+                if (removedText.text) {
+                    removedText.textMessage = '';
+                    removedText.text.destroy();
                 }
 
-                const message = 'You found a key!! Let\'s find the treasure chest that matches the key.';
-                const offsetY = this.textLogs.length * 16;
-                const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+                this.textLogs.forEach(textLog => {
+                    textLog.worldY -= 16;
+                    if (textLog.text) {
+                        textLog.text.y -= 16;
+                    }
+                });
+            }
 
-                this.newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
-                this.newTextLog.typeCreate();
-                this.textLogs.push(this.newTextLog);
+            const message = 'You found a key!! Let\'s find the treasure chest that matches the key.';
+            const offsetY = this.textLogs.length * 16;
+            const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+
+            this.newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
+            this.newTextLog.typeCreate();
+            this.textLogs.push(this.newTextLog);
+
+        } else if (!this.player.isMoving && !this.interaction &&
+            this.player.x === 6 && this.player.y === 3 &&
+            this.space_Key.isDown && this.player.direction === 2 &&
+            this.map.getTileIndexAt(13, 1, this.map.objectsLayer) === 0 &&
+            this.map.getTileIndexAt(6, 2, this.map.objectsLayer) === 3825) {
 
             this.interaction = true;
+
+            this.map.setTileIndexAt(6, 2, this.map.objectsLayer, 3826); // open the chest
+
+            if (this.textLogs.length >= 5) {
+                const removedText = this.textLogs.shift();
+                if (removedText.text) {
+                    removedText.textMessage = '';
+                    removedText.text.destroy();
+                    }
+
+                this.textLogs.forEach(textLog => {
+                    textLog.worldY -= 16;
+                    if (textLog.text) {
+                        textLog.text.y -= 16;
+                    }
+                });
+            }
+            
+            const message = 'Opening the treasure chest ...';
+            const offsetY = this.textLogs.length * 16;
+            const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+
+            this.newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
+            this.newTextLog.typeCreate();
+            this.textLogs.push(this.newTextLog);
 
         } else {
             this.interaction = false;
