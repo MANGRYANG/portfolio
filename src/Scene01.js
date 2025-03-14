@@ -105,12 +105,14 @@ export default class Scene01 extends Phaser.Scene {
                 (currentTileIndex >= 5522 && currentTileIndex <= 5527)) {
                     this.cameras.main.fadeOut(200, 0, 0, 0);
                     this.cameras.main.shake(200, 0.01);
+                    let message = "YOU DIED!! :( ";
+                    let deathLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + 5, 'pixelFont', message, 16, 1);
                     this.time.addEvent({
                     delay: 200,
                     callback: () => {
                         this.cameras.main.resetFX();
                         this.scene.stop();
-                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [], keyCollection: [false, false, false, false, false] });
+                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [false, false, false, false, false] });
                     }
                 });
             }
