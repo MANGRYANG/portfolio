@@ -54,6 +54,42 @@ export default class Scene01 extends Phaser.Scene {
                 this.textLogs = [];
             }
         });
+
+        this.input.keyboard.on('keydown-K', (event) => {
+            if (this.input.keyboard.checkDown(this.ctrl_Key)) {
+                event.preventDefault();
+
+                if (this.textLogs.length >= 5) {
+                    const removedText = this.textLogs.shift();
+                    if (removedText.text) {
+                        removedText.textMessage = '';
+                        removedText.text.destroy();
+                    }
+
+                    this.textLogs.forEach(textLog => {
+                        textLog.worldY -= 16;
+                        if (textLog.text) {
+                            textLog.text.y -= 16;
+                        }
+                    });
+                }
+
+                let keysCollected = [];
+                const keyNames = ["Red key", "Blue key", "Green key", "Golden key", "Silver key"];
+
+                keyNames.forEach((key, index) => {
+                    if (this.keyCollection[index]) {
+                        keysCollected.push(key);
+                    }
+                });
+
+                let message = keysCollected.length === 0 ? "You didn't collect any keys!" : "Collected keys: " + keysCollected.join(", ");
+                const offsetY = this.textLogs.length * 16;
+                let keySlotLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5, 'pixelFont', message, 16, 1);
+                keySlotLog.typeCreate();
+                this.textLogs.push(keySlotLog);
+            }
+        });
     }
 
     setupScene(data) {
@@ -86,7 +122,6 @@ export default class Scene01 extends Phaser.Scene {
         this.a_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.s_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.d_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        this.l_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
         this.space_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.ctrl_Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL);
     }
