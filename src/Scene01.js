@@ -62,6 +62,10 @@ export default class Scene01 extends Phaser.Scene {
         this.titleText.create();
         this.map = new map(this, 'map01', scale);
         this.map.createMap();
+        this.keyCollection = data.keyCollection;
+        if(this.keyCollection[0]) {
+            this.map.setTileIndexAt(13, 1, this.map.objectsLayer, 0);
+        }
         this.textLogs = [];
         if(data.textLogs != undefined) {
             data.textLogs.forEach(textLog => {
@@ -106,10 +110,11 @@ export default class Scene01 extends Phaser.Scene {
                     callback: () => {
                         this.cameras.main.resetFX();
                         this.scene.stop();
-                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [] });
+                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [], keyCollection: [false, false, false, false, false] });
                     }
                 });
             }
+
             this.lastTimeSymbol = currentTimeSymbol;
             this.handlePlayerInteraction();
             this.handlePlayerMovement();
@@ -128,7 +133,9 @@ export default class Scene01 extends Phaser.Scene {
             this.player.direction = 0;
 
             this.player.raiseAnimation();
+
             this.map.setTileIndexAt(13, 1, this.map.objectsLayer, 0);
+            this.keyCollection[0] = true;
 
             if (this.textLogs.length >= 5) {
                 const removedText = this.textLogs.shift();
@@ -158,8 +165,7 @@ export default class Scene01 extends Phaser.Scene {
             this.space_Key.isDown && this.player.direction === 2 &&
             this.map.getTileIndexAt(6, 2, this.map.objectsLayer) === 3825) {
                 this.interaction = true;
-                if(this.map.getTileIndexAt(13, 1, this.map.objectsLayer) === 0) {   // player got a key
-                    
+                if(this.keyCollection[0]) {   // player got a key
                     this.map.setTileIndexAt(6, 2, this.map.objectsLayer, 3826); // open the chest
 
                     if (this.textLogs.length >= 5) {
@@ -222,11 +228,11 @@ export default class Scene01 extends Phaser.Scene {
             if (this.cursors.down.isDown || this.s_Key.isDown) {
                 this.movePlayer(0, 1, tileX, tileY);
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
-                this.movePlayer(1, 0, tileX, tileY, 'scene-02', { portalDirection: 1, playerDirection: this.getDirection(1, 0), textLogs: this.textLogs });
+                this.movePlayer(1, 0, tileX, tileY, 'scene-02', { portalDirection: 1, playerDirection: this.getDirection(1, 0), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
                 this.movePlayer(0, -1, tileX, tileY);
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {
-                this.movePlayer(-1, 0, tileX, tileY, 'start-scene', { portalDirection: 3, playerDirection : this.getDirection(-1, 0), textLogs: this.textLogs });
+                this.movePlayer(-1, 0, tileX, tileY, 'start-scene', { portalDirection: 3, playerDirection : this.getDirection(-1, 0), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else {
                 this.player.idleAnimation();
             }

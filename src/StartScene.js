@@ -62,6 +62,7 @@ export default class StartScene extends Phaser.Scene {
         this.titleText.create();
         this.map = new map(this, 'startMap', scale);
         this.map.createMap();
+        this.keyCollection = data.keyCollection ? data.keyCollection : [false, false, false, false, false];
         this.textLogs = [];
         if(data.textLogs != undefined) {
             data.textLogs.forEach(textLog => {
@@ -143,8 +144,6 @@ export default class StartScene extends Phaser.Scene {
         }
     }
 
-
-
     handlePlayerMovement() {
         if (!this.player.isMoving && !this.interaction) {
             const tileX = this.player.x;
@@ -153,7 +152,7 @@ export default class StartScene extends Phaser.Scene {
             if (this.cursors.down.isDown || this.s_Key.isDown) {
                 this.movePlayer(0, 1, tileX, tileY);
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
-                this.movePlayer(1, 0, tileX, tileY, 'scene-01', { portalDirection: 1, playerDirection: this.getDirection(1, 0), textLogs: this.textLogs });
+                this.movePlayer(1, 0, tileX, tileY, 'scene-01', { portalDirection: 1, playerDirection: this.getDirection(1, 0), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
                 this.movePlayer(0, -1, tileX, tileY);
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {

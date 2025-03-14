@@ -62,6 +62,7 @@ export default class Scene01 extends Phaser.Scene {
         this.titleText.create();
         this.map = new map(this, 'map02', scale);
         this.map.createMap();
+        this.keyCollection = data.keyCollection;
         this.textLogs = [];
         if(data.textLogs != undefined) {
             data.textLogs.forEach(textLog => {
@@ -108,11 +109,11 @@ export default class Scene01 extends Phaser.Scene {
             if (this.cursors.down.isDown || this.s_Key.isDown) {
                 this.movePlayer(0, 1, tileX, tileY);
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
-                this.movePlayer(1, 0, tileX, tileY, 'scene-02', { portalDirection: 1, playerDirection : this.getDirection(1, 0), textLogs: this.textLog });
+                this.movePlayer(1, 0, tileX, tileY);
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
                 this.movePlayer(0, -1, tileX, tileY);
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {
-                this.movePlayer(-1, 0, tileX, tileY, 'scene-01', { portalDirection: 3, playerDirection : this.getDirection(-1, 0), textLogs: this.textLog });
+                this.movePlayer(-1, 0, tileX, tileY, 'scene-01', { portalDirection: 3, playerDirection : this.getDirection(-1, 0), textLogs: this.textLog, keyCollection: this.keyCollection });
             } else {
                 this.player.idleAnimation();
             }
@@ -125,7 +126,7 @@ export default class Scene01 extends Phaser.Scene {
 
         if (this.canMove(tileX + dx, tileY + dy)) {
             this.player.move(dx, dy);
-        } else if ((dx === 1 && tileX === 19) || (dx === -1 && tileX === 0)) { // Check for scene transition
+        } else if (dx === -1 && tileX === 0) { // Check for scene transition
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.scene.stop();
             this.scene.start(sceneKey, sceneData);
@@ -134,7 +135,10 @@ export default class Scene01 extends Phaser.Scene {
 
     canMove(targetX, targetY) {
         const wallTileIndex = this.map.getTileIndexAt(targetX, targetY, this.map.wallsLayer);
-        return (!(wallTileIndex === 1)) && (targetX > -1 && targetX < 20) && (targetY > -1 && targetY < 11);
+        if(targetX === 20) {return false;}
+        else {
+            return (!(wallTileIndex === 1)) && (targetX > -1 && targetX < 20) && (targetY > -1 && targetY < 11);
+        }
     }
 
     getDirection(dx, dy) {
