@@ -33,7 +33,7 @@ export default class gameMap {
 
         this.objectsLayer.forEachTile(tile => {
             if ((tile.index >= 3826 && tile.index < 3832) ||
-                (tile.index >= 3938 && tile.index < 3944) ||
+                (tile.index >= 3939 && tile.index < 3945) ||
                 (tile.index >= 4296 && tile.index < 4303) ||
                 (tile.index >= 4409 && tile.index < 4416) ||
                 (tile.index >= 4955 && tile.index < 4962) ||
@@ -55,6 +55,10 @@ export default class gameMap {
                         tile.index === 8063 ||
                         tile.index === 8177) {
                 tile.index -= 14; // Repeat animation
+            } else if (tile.index === 3832) {
+                tile.index = 3938;
+            } else if (tile.index === 3945) {
+                tile.index = 3825;
             }
         });
 
