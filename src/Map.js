@@ -32,7 +32,9 @@ export default class gameMap {
         });
 
         this.objectsLayer.forEachTile(tile => {
-            if ((tile.index >= 4296 && tile.index < 4303) ||
+            if ((tile.index >= 3826 && tile.index < 3832) ||
+                (tile.index >= 3938 && tile.index < 3944) ||
+                (tile.index >= 4296 && tile.index < 4303) ||
                 (tile.index >= 4409 && tile.index < 4416) ||
                 (tile.index >= 4955 && tile.index < 4962) ||
                 (tile.index >= 5068 && tile.index < 5075) ||
