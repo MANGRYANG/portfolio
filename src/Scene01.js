@@ -8,7 +8,9 @@ const titleFontXmlURL = '../assets/font/font.xml';
 const playerIdleURL = '../assets/characters/Idle.png';
 const playerWalkURL = '../assets/characters/Walk.png';
 const playerRaiseURL = '../assets/characters/Raise.png';
+const playerFallingURL = '../assets/characters/Fall.png';
 const dungeonTilesURL = '../assets/Dungeon.png';
+const slimeTilesURL = '../assets/Slime.png';
 const map01URL = '../maps/Map01.json';
 
 const pageWidth = 800;
@@ -30,10 +32,12 @@ export default class Scene01 extends Phaser.Scene {
     loadAssets() {
         this.load.bitmapFont('pixelFont', titleFontPngURL, titleFontXmlURL);
         this.load.image('dungeon_tiles', dungeonTilesURL);
+        this.load.image('slime_tiles', slimeTilesURL);
         this.load.tilemapTiledJSON('map01', map01URL);
         this.load.spritesheet('playerIdle', playerIdleURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerWalk', playerWalkURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerRaise', playerRaiseURL, { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('playerFalling', playerFallingURL, { frameWidth: 32, frameHeight: 32 });
     }
 
     create(data) {

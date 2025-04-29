@@ -11,17 +11,22 @@ export default class gameMap {
 
     createMap() {
         const map = this.scene.make.tilemap({ key: this.key });
-        const tileset = map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
 
-        this.floorsLayer = map.createLayer("Floors", tileset, (pageWidth - this.scale * 320) / 2,
-            (pageHeight - this.scale * 172) / 2).setScale(this.scale);
-        this.decorationsLayer = map.createLayer("Decorations", tileset, (pageWidth - this.scale * 320) / 2,
-            (pageHeight - this.scale * 172) / 2).setScale(this.scale);
-        this.wallsLayer = map.createLayer("Walls", tileset, (pageWidth - this.scale * 320) / 2,
-            (pageHeight - this.scale * 172) / 2).setScale(this.scale);
-        this.objectsLayer = map.createLayer("Objects", tileset, (pageWidth - this.scale * 320) / 2,
-            (pageHeight - this.scale * 172) / 2).setScale(this.scale);	
+        const dungeonTileset = map.addTilesetImage("Dungeon", "dungeon_tiles", 16, 16);
+        const slimeTileset = map.addTilesetImage("Slime", "slime_tiles", 16, 16);
+
+        const offsetX = (pageWidth - this.scale * 320) / 2;
+        const offsetY = (pageHeight - this.scale * 172) / 2;
+
+        const tilesets = [dungeonTileset, slimeTileset];
+
+        this.floorsLayer = map.createLayer("Floors", tilesets, offsetX, offsetY).setScale(this.scale);
+        this.decorationsLayer = map.createLayer("Decorations", tilesets, offsetX, offsetY).setScale(this.scale);
+        this.wallsLayer = map.createLayer("Walls", tilesets, offsetX, offsetY).setScale(this.scale);
+        this.objectsLayer = map.createLayer("Objects", tilesets, offsetX, offsetY).setScale(this.scale);
     }
+
+    
     updateMap(currentTimeSymbol) {
         this.decorationsLayer.forEachTile(tile => {
             if(tile.index >= 3866 && tile.index < 3881) {
@@ -53,18 +58,18 @@ export default class gameMap {
                         tile.index === 5414 ||
                         tile.index === 6883) {
                 tile.index -= 7; // Repeat animation
+            } else if(tile.index >= 8501 && tile.index < 8522) {    // Slimes
+                tile.index += 3;
             } else if (tile.index === 5534 ||
                         tile.index === 8063 ||
                         tile.index === 8177) {
                 tile.index -= 14; // Repeat animation
-            } else if (tile.index === 3493) {
-                tile.index = 3599;
-            } else if (tile.index === 3606) {
-                tile.index = 3486;
-            } else if (tile.index === 3832) {
-                tile.index = 3938;
-            } else if (tile.index === 3945) {
-                tile.index = 3825;
+            } else if ((tile.index === 3493) || (tile.index === 3832)) {
+                tile.index += 106;
+            } else if ((tile.index === 3606) || (tile.index === 3945)) {
+                tile.index -= 120;
+            } else if (tile.index === 8522) {
+                tile.index -= 21;
             }
         });
 
@@ -72,15 +77,27 @@ export default class gameMap {
             this.objectsLayer.forEachTile(tile => {
                 if ((tile.index >= 6650 && tile.index < 6657)) {
                     tile.index += 1;
-                } else if ((tile.index > 6181 && tile.index <= 6196) ||
-                    (tile.index > 5729 && tile.index <= 5744)) {
+                } else if ((tile.index > 5729 && tile.index <= 5744) ||
+                    (tile.index > 6181 && tile.index <= 6196) ||
+                    (tile.index > 6407 && tile.index <= 6422)) {
                     tile.index -= 1;
+                } else if (tile.index === 5729 || tile.index === 6181 || tile.index === 6407) {
+                    tile.index += 15; // Repeat animation
                 } else if (tile.index === 6657) {
                     tile.index -= 7; // Repeat animation
-                } else if (tile.index === 6181 || tile.index === 5729) {
-                    tile.index += 15; // Repeat animation
-                }
+                } 
             });
+        }
+
+        if(currentTimeSymbol % 16 === 0) {
+            this.objectsLayer.forEachTile(tile => {
+                if ((tile.index >= 7258 && tile.index < 7273) || 
+                    (tile.index >= 7484 && tile.index < 7499)) {    // Waves
+                    tile.index += 1;
+                } else if ((tile.index === 7273) || (tile.index === 7499)) {
+                    tile.index -= 15;
+                }
+            })
         }
     }
 

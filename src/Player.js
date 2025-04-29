@@ -51,6 +51,13 @@ export default class Player {
             frameRate: 10,
             repeat: 0
         });
+
+        this.scene.anims.create({
+            key: 'falling',
+            frames: this.scene.anims.generateFrameNumbers('playerFalling', { start: 0, end: 8}),
+            frameRate: 10,
+            repeat: 0
+        });
     }
 
     idleAnimation() {
@@ -64,6 +71,17 @@ export default class Player {
     raiseAnimation(callback) {
         this.isMoving = true;
         this.sprite.anims.play('raise', true);
+
+        this.sprite.on('animationcomplete', () => {
+            this.isMoving = false;
+            this.idleAnimation();
+            if (callback) callback();
+        });
+    }
+
+    fallingAnimation(callback) {
+        this.isMoving = true;
+        this.sprite.anims.play('falling', true);
 
         this.sprite.on('animationcomplete', () => {
             this.isMoving = false;
@@ -93,13 +111,5 @@ export default class Player {
         this.isMoving = false;
         this.x += deltaX;
         this.y += deltaY;
-    }
-
-    raise() {
-        this.scene.tweens.add({
-            targets: this.sprite,
-            duration: 160,
-            onComplete: () => this.idleAnimation()
-        });
     }
 }

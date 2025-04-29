@@ -8,7 +8,9 @@ const titleFontXmlURL = '../assets/font/font.xml';
 const playerIdleURL = '../assets/characters/Idle.png';
 const playerWalkURL = '../assets/characters/Walk.png';
 const playerRaiseURL = '../assets/characters/Raise.png';
+const playerFallingURL = '../assets/characters/Fall.png';
 const dungeonTilesURL = '../assets/Dungeon.png';
+const slimeTilesURL = '../assets/Slime.png';
 const map02URL = '../maps/Map02.json';
 
 const pageWidth = 800;
@@ -30,10 +32,12 @@ export default class Scene02 extends Phaser.Scene {
     loadAssets() {
         this.load.bitmapFont('pixelFont', titleFontPngURL, titleFontXmlURL);
         this.load.image('dungeon_tiles', dungeonTilesURL);
+        this.load.image('slime_tiles', slimeTilesURL);
         this.load.tilemapTiledJSON('map02', map02URL);
         this.load.spritesheet('playerIdle', playerIdleURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerWalk', playerWalkURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerRaise', playerRaiseURL, { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('playerFalling', playerFallingURL, { frameWidth: 32, frameHeight: 32 });
     }
 
     create(data) {
@@ -136,7 +140,7 @@ export default class Scene02 extends Phaser.Scene {
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
                 this.movePlayer(1, 0, tileX, tileY);
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
-                this.movePlayer(0, -1, tileX, tileY);
+                this.movePlayer(0, -1, tileX, tileY, 'scene-04', { portalDirection: 2, playerDirection : this.getDirection(0, -1), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {
                 this.movePlayer(-1, 0, tileX, tileY, 'scene-01', { portalDirection: 3, playerDirection : this.getDirection(-1, 0), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else {
@@ -151,7 +155,7 @@ export default class Scene02 extends Phaser.Scene {
 
         if (this.canMove(tileX + dx, tileY + dy)) {
             this.player.move(dx, dy);
-        } else if ((dx === -1 && tileX === 0) || (dy === 1 && tileY === 10)) { // Check for scene transition
+        } else if ((dx === -1 && tileX === 0) || (dy === 1 && tileY === 10) || (dy === -1 && tileY === 0)) { // Check for scene transition
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.scene.stop();
             this.scene.start(sceneKey, sceneData);
