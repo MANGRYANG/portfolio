@@ -136,22 +136,9 @@ export default class Scene03 extends Phaser.Scene {
             this.map.setTileIndexAt(12, 3, this.map.objectsLayer, 4397);
             this.interaction = true;
 
-            if (this.textLogs.length >= 5) {
-                const removedText = this.textLogs.shift();
-                if (removedText.text) {
-                    removedText.textMessage = '';
-                    removedText.text.destroy();
-                }
+            this.checkTextLogRenewal();
 
-                this.textLogs.forEach(textLog => {
-                    textLog.worldY -= 16;
-                    if (textLog.text) {
-                        textLog.text.y -= 16;
-                    }
-                });
-            }
-
-            const message = 'Details about the roagelike FPS game project built using Unreal engine 5 can be found here.';
+            const message = 'Details about the roguelike-FPS game project built using Unreal engine 5 can be found here.';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -242,7 +229,7 @@ export default class Scene03 extends Phaser.Scene {
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
                 this.movePlayer(1, 0, tileX, tileY);
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
-                this.movePlayer(0, -1, tileX, tileY, 'scene-02', { portalDirection: 2, playerDirection : this.getDirection(0, -1), textLogs: this.textLog, keyCollection: this.keyCollection });
+                this.movePlayer(0, -1, tileX, tileY, 'scene-02', { portalDirection: 2, playerDirection : this.getDirection(0, -1), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {
                 this.movePlayer(-1, 0, tileX, tileY);
             } else {

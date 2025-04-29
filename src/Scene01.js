@@ -157,20 +157,7 @@ export default class Scene01 extends Phaser.Scene {
             this.map.setTileIndexAt(3, 5, this.map.objectsLayer, 4171);
             this.interaction = true;
 
-            if (this.textLogs.length >= 5) {
-                const removedText = this.textLogs.shift();
-                if (removedText.text) {
-                    removedText.textMessage = '';
-                    removedText.text.destroy();
-                }
-
-                this.textLogs.forEach(textLog => {
-                    textLog.worldY -= 16;
-                    if (textLog.text) {
-                        textLog.text.y -= 16;
-                    }
-                });
-            }
+            this.checkTextLogRenewal();
 
             const message = 'Details about the board game project built using C++ can be found here.';
             const offsetY = this.textLogs.length * 16;
