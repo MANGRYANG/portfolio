@@ -132,13 +132,13 @@ export default class Scene02 extends Phaser.Scene {
             const tileY = this.player.y;
 
             if (this.cursors.down.isDown || this.s_Key.isDown) {
-                this.movePlayer(0, 1, tileX, tileY, 'scene-03', { portalDirection: 0, playerDirection : this.getDirection(0, 1), textLogs: this.textLog, keyCollection: this.keyCollection });
+                this.movePlayer(0, 1, tileX, tileY, 'scene-03', { portalDirection: 0, playerDirection : this.getDirection(0, 1), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
                 this.movePlayer(1, 0, tileX, tileY);
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
                 this.movePlayer(0, -1, tileX, tileY);
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {
-                this.movePlayer(-1, 0, tileX, tileY, 'scene-01', { portalDirection: 3, playerDirection : this.getDirection(-1, 0), textLogs: this.textLog, keyCollection: this.keyCollection });
+                this.movePlayer(-1, 0, tileX, tileY, 'scene-01', { portalDirection: 3, playerDirection : this.getDirection(-1, 0), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else {
                 this.player.idleAnimation();
             }
