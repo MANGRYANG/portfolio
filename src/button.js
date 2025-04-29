@@ -29,7 +29,7 @@ buttonForGithub.addEventListener('click', () => {
 });
 
 buttonForBlog.addEventListener('click', () => {
-    window.open('https://www.google.com', '_blank');
+    window.open('https://medium.com/@mangryang.dev', '_blank');
 });
 
 buttonForYoutube.addEventListener('click', () => {

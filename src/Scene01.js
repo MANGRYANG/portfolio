@@ -146,7 +146,44 @@ export default class Scene01 extends Phaser.Scene {
     }
 
     handlePlayerInteraction() {
+        // Interaction with signpost
         if (!this.player.isMoving && !this.interaction &&
+            this.space_Key.isDown && (this.map.getTileIndexAt(3, 5, this.map.objectsLayer) === 4170) &&
+            ((this.player.x === 3 && this.player.y === 4 && this.player.direction === 0) ||
+            (this.player.x === 2 && this.player.y === 5 && this.player.direction === 1) ||
+            (this.player.x === 3 && this.player.y === 6 && this.player.direction === 2) ||
+            (this.player.x === 4 && this.player.y === 5 && this.player.direction === 3))) {
+            this.player.idleAnimation();
+            this.map.setTileIndexAt(3, 5, this.map.objectsLayer, 4171);
+            this.interaction = true;
+
+            if (this.textLogs.length >= 5) {
+                const removedText = this.textLogs.shift();
+                if (removedText.text) {
+                    removedText.textMessage = '';
+                    removedText.text.destroy();
+                }
+
+                this.textLogs.forEach(textLog => {
+                    textLog.worldY -= 16;
+                    if (textLog.text) {
+                        textLog.text.y -= 16;
+                    }
+                });
+            }
+
+            const message = 'Details about the board game project built using C++ can be found here.';
+            const offsetY = this.textLogs.length * 16;
+            const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+
+            this.newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
+            this.newTextLog.typeCreate();
+            this.textLogs.push(this.newTextLog);
+
+        } else if (!this.space_Key.isDown && (this.map.getTileIndexAt(3, 5, this.map.objectsLayer) === 4171)) {
+            this.map.setTileIndexAt(3, 5, this.map.objectsLayer, 4170);
+            this.interaction = false;
+        } else if (!this.player.isMoving && !this.interaction &&
             this.player.x === 13 && this.player.y === 1 &&
             !this.keyCollection[3]) { // When the player collects the golden key
             

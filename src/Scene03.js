@@ -1,4 +1,4 @@
-// Scene02.js
+// Scene03.js
 import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
@@ -9,15 +9,15 @@ const playerIdleURL = '../assets/characters/Idle.png';
 const playerWalkURL = '../assets/characters/Walk.png';
 const playerRaiseURL = '../assets/characters/Raise.png';
 const dungeonTilesURL = '../assets/Dungeon.png';
-const map02URL = '../maps/Map02.json';
+const map03URL = '../maps/Map03.json';
 
 const pageWidth = 800;
 const pageHeight = 600;
 const scale = 2;
 
-export default class Scene02 extends Phaser.Scene {
+export default class Scene03 extends Phaser.Scene {
     constructor() {
-        super('scene-02');
+        super('scene-03');
         this.map = null;
         this.lastTimeSymbol = 0;
         this.tileSize = scale * 16;
@@ -30,7 +30,7 @@ export default class Scene02 extends Phaser.Scene {
     loadAssets() {
         this.load.bitmapFont('pixelFont', titleFontPngURL, titleFontXmlURL);
         this.load.image('dungeon_tiles', dungeonTilesURL);
-        this.load.tilemapTiledJSON('map02', map02URL);
+        this.load.tilemapTiledJSON('map03', map03URL);
         this.load.spritesheet('playerIdle', playerIdleURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerWalk', playerWalkURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerRaise', playerRaiseURL, { frameWidth: 32, frameHeight: 32 });
@@ -83,7 +83,7 @@ export default class Scene02 extends Phaser.Scene {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
         this.titleText = new text(this, pageWidth / 2, pageHeight / 4 - (16 * 5 + 8), 'pixelFont', "Mangryang's Dungeon", 64, 0);
         this.titleText.create();
-        this.map = new map(this, 'map02', scale);
+        this.map = new map(this, 'map03', scale);
         this.map.createMap();
         this.keyCollection = data.keyCollection;
         this.textLogs = [];
@@ -97,10 +97,8 @@ export default class Scene02 extends Phaser.Scene {
     }
 
     initializePlayer(data) {
-        const playerPosition = (data.portalDirection === 0) ? { x: 6, y: 0 } : 
-            ((data.portalDirection === 1) ? {x: 0, y: 6} : 
-            ((data.portalDirection === 2) ? {x: 5, y: 10}
-            : {x: 17, y: 2}));
+        // PortalDirection is always 0
+        const playerPosition = { x: 9, y: 0 };
         this.player = new player(this, playerPosition.x, playerPosition.y, data.playerDirection, scale);
         this.player.create();
         this.player.idleAnimation(data.playerDirection);
@@ -122,7 +120,115 @@ export default class Scene02 extends Phaser.Scene {
         if (currentTimeSymbol !== this.lastTimeSymbol) {
             this.map.updateMap(currentTimeSymbol);
             this.lastTimeSymbol = currentTimeSymbol;
+            this.handlePlayerInteraction();
             this.handlePlayerMovement();
+        }
+    }
+
+    handlePlayerInteraction() {
+        // Interaction with signpost
+        if (!this.player.isMoving && !this.interaction &&
+            this.space_Key.isDown && (this.map.getTileIndexAt(12, 3, this.map.objectsLayer) === 4396) &&
+            ((this.player.x === 12 && this.player.y === 2 && this.player.direction === 0) ||
+            (this.player.x === 11 && this.player.y === 3 && this.player.direction === 1) ||
+            (this.player.x === 12 && this.player.y === 4 && this.player.direction === 2))) {
+            this.player.idleAnimation();
+            this.map.setTileIndexAt(12, 3, this.map.objectsLayer, 4397);
+            this.interaction = true;
+
+            if (this.textLogs.length >= 5) {
+                const removedText = this.textLogs.shift();
+                if (removedText.text) {
+                    removedText.textMessage = '';
+                    removedText.text.destroy();
+                }
+
+                this.textLogs.forEach(textLog => {
+                    textLog.worldY -= 16;
+                    if (textLog.text) {
+                        textLog.text.y -= 16;
+                    }
+                });
+            }
+
+            const message = 'Details about the roagelike FPS game project built using Unreal engine 5 can be found here.';
+            const offsetY = this.textLogs.length * 16;
+            const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+
+            this.newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
+            this.newTextLog.typeCreate();
+            this.textLogs.push(this.newTextLog);
+
+        } else if (!this.space_Key.isDown && (this.map.getTileIndexAt(12, 3, this.map.objectsLayer) === 4397)) {
+            this.map.setTileIndexAt(12, 3, this.map.objectsLayer, 4396);
+            this.interaction = false;
+        } else if (!this.player.isMoving && !this.interaction &&
+            this.player.x === 1 && this.player.y === 5 &&
+            !this.keyCollection[1]) { // When the player collects the blue key
+            
+            this.interaction = true;
+            
+            this.player.direction = 0;
+            this.player.raiseAnimation();
+            
+            this.map.setTileIndexAt(1, 5, this.map.objectsLayer, 0);
+            this.keyCollection[1] = true;
+
+            this.player.isMoving = true; // Stop player's moving
+
+            const message = 'You found a blue key!!';
+            const offsetY = this.textLogs.length * 16;
+            const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+
+            let newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
+            newTextLog.typeCreate();
+            this.textLogs.push(newTextLog);
+
+        } else if (!this.interaction &&
+            this.player.x === 14 && this.player.y === 4 &&
+            this.space_Key.isDown && this.player.direction === 2) {
+
+            this.interaction = true;
+
+            if (this.map.getTileIndexAt(14, 3, this.map.objectsLayer) === 3486) {
+                this.checkTextLogRenewal();
+                if (this.keyCollection[1]) { // When a player attempts to open a treasure chest with a blue key
+                    this.map.setTileIndexAt(14, 3, this.map.objectsLayer, 3487); // Open a cheset
+                    this.player.isMoving = true; // Stop player's moving
+                    this.player.idleAnimation();
+
+                    const message = 'Opening the treasure chest ...';
+                    const offsetY = this.textLogs.length * 16;
+                    const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+
+                    let newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
+                    newTextLog.typeCreate();
+                    this.textLogs.push(newTextLog);
+                } else {  // When a player attempts to open a treasure chest without a blue key
+                    const message = 'Unable to open the chest ... T^T';
+                    const offsetY = this.textLogs.length * 16;
+                    const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+
+                    let newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
+                    newTextLog.typeCreate();
+                    this.textLogs.push(newTextLog);
+                }
+            } else if (this.map.getTileIndexAt(14, 3, this.map.objectsLayer) === 3599) { // When the player closes the treasure chest
+                this.checkTextLogRenewal();
+                this.map.setTileIndexAt(14, 3, this.map.objectsLayer, 3600); // Close a chest
+                this.player.isMoving = false; // Player can move
+
+                const message = 'Closing the treasure chest ...';
+                const offsetY = this.textLogs.length * 16;
+                const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
+
+                let newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
+                newTextLog.typeCreate();
+                this.textLogs.push(newTextLog);
+            }
+
+        } else {
+            this.interaction = false;
         }
     }
 
@@ -132,13 +238,13 @@ export default class Scene02 extends Phaser.Scene {
             const tileY = this.player.y;
 
             if (this.cursors.down.isDown || this.s_Key.isDown) {
-                this.movePlayer(0, 1, tileX, tileY, 'scene-03', { portalDirection: 0, playerDirection : this.getDirection(0, 1), textLogs: this.textLog, keyCollection: this.keyCollection });
+                this.movePlayer(0, 1, tileX, tileY);
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
                 this.movePlayer(1, 0, tileX, tileY);
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
-                this.movePlayer(0, -1, tileX, tileY);
+                this.movePlayer(0, -1, tileX, tileY, 'scene-02', { portalDirection: 2, playerDirection : this.getDirection(0, -1), textLogs: this.textLog, keyCollection: this.keyCollection });
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {
-                this.movePlayer(-1, 0, tileX, tileY, 'scene-01', { portalDirection: 3, playerDirection : this.getDirection(-1, 0), textLogs: this.textLog, keyCollection: this.keyCollection });
+                this.movePlayer(-1, 0, tileX, tileY);
             } else {
                 this.player.idleAnimation();
             }
@@ -151,7 +257,7 @@ export default class Scene02 extends Phaser.Scene {
 
         if (this.canMove(tileX + dx, tileY + dy)) {
             this.player.move(dx, dy);
-        } else if ((dx === -1 && tileX === 0) || (dy === 1 && tileY === 10)) { // Check for scene transition
+        } else if (dy === -1 && tileY === 0) { // Check for scene transition
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.scene.stop();
             this.scene.start(sceneKey, sceneData);

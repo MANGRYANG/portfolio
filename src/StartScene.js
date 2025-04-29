@@ -59,20 +59,7 @@ export default class StartScene extends Phaser.Scene {
             if (this.input.keyboard.checkDown(this.ctrl_Key)) {
                 event.preventDefault();
 
-                if (this.textLogs.length >= 5) {
-                    const removedText = this.textLogs.shift();
-                    if (removedText.text) {
-                        removedText.textMessage = '';
-                        removedText.text.destroy();
-                    }
-
-                    this.textLogs.forEach(textLog => {
-                        textLog.worldY -= 16;
-                        if (textLog.text) {
-                            textLog.text.y -= 16;
-                        }
-                    });
-                }
+                this.checkTextLogRenewal();
 
                 let keysCollected = [];
                 const keyNames = ["Red key", "Blue key", "Green key", "Golden key", "Silver key"];
@@ -222,5 +209,22 @@ export default class StartScene extends Phaser.Scene {
         if (dy < 0) return 2; // Up
         if (dx < 0) return 3; // Left
         return -1; // Idle
+    }
+
+    checkTextLogRenewal() {
+        if (this.textLogs.length >= 5) {
+            const removedText = this.textLogs.shift();
+            if (removedText.text) {
+                removedText.textMessage = '';
+                removedText.text.destroy();
+            }
+
+            this.textLogs.forEach(textLog => {
+                textLog.worldY -= 16;
+                if (textLog.text) {
+                    textLog.text.y -= 16;
+                }
+            });
+        }
     }
 }
