@@ -27,4 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
     portfolioDiv.style.flexDirection = 'column';
     portfolioDiv.style.alignItems = 'center';
     portfolioDiv.style.justifyContent = 'center';
+
+    
 });

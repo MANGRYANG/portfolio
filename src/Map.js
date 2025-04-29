@@ -32,7 +32,9 @@ export default class gameMap {
         });
 
         this.objectsLayer.forEachTile(tile => {
-            if ((tile.index >= 3826 && tile.index < 3832) ||
+            if ((tile.index >= 3487 && tile.index < 3493) ||
+                (tile.index >= 3600 && tile.index < 3606) ||
+                (tile.index >= 3826 && tile.index < 3832) ||
                 (tile.index >= 3939 && tile.index < 3945) ||
                 (tile.index >= 4296 && tile.index < 4303) ||
                 (tile.index >= 4409 && tile.index < 4416) ||
@@ -55,6 +57,10 @@ export default class gameMap {
                         tile.index === 8063 ||
                         tile.index === 8177) {
                 tile.index -= 14; // Repeat animation
+            } else if (tile.index === 3493) {
+                tile.index = 3599;
+            } else if (tile.index === 3606) {
+                tile.index = 3486;
             } else if (tile.index === 3832) {
                 tile.index = 3938;
             } else if (tile.index === 3945) {
@@ -66,11 +72,12 @@ export default class gameMap {
             this.objectsLayer.forEachTile(tile => {
                 if ((tile.index >= 6650 && tile.index < 6657)) {
                     tile.index += 1;
-                } else if ((tile.index > 6181 && tile.index <= 6196)) {
+                } else if ((tile.index > 6181 && tile.index <= 6196) ||
+                    (tile.index > 5729 && tile.index <= 5744)) {
                     tile.index -= 1;
                 } else if (tile.index === 6657) {
                     tile.index -= 7; // Repeat animation
-                } else if (tile.index === 6181) {
+                } else if (tile.index === 6181 || tile.index === 5729) {
                     tile.index += 15; // Repeat animation
                 }
             });
