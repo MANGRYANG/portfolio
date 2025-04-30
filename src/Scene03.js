@@ -142,7 +142,7 @@ export default class Scene03 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = 'Details about the roguelike-FPS game project built using Unreal engine 5 can be found here.';
+            const message = '[NOTICE] Details about the roguelike-FPS game project built using Unreal Engine 5 can be found here.';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -167,7 +167,7 @@ export default class Scene03 extends Phaser.Scene {
 
             this.player.isMoving = true; // Stop player's moving
 
-            const message = 'You found a blue key!!';
+            const message = '[SYSTEM] You found a blue key!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -188,7 +188,7 @@ export default class Scene03 extends Phaser.Scene {
                     this.player.isMoving = true; // Stop player's moving
                     this.player.idleAnimation();
 
-                    const message = 'Opening the treasure chest ...';
+                    const message = '[SYSTEM] Opening the treasure chest ...';
                     const offsetY = this.textLogs.length * 16;
                     const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -196,7 +196,7 @@ export default class Scene03 extends Phaser.Scene {
                     newTextLog.typeCreate();
                     this.textLogs.push(newTextLog);
                 } else {  // When a player attempts to open a treasure chest without a blue key
-                    const message = 'Unable to open the chest ... T^T';
+                    const message = '[SYSTEM] Unable to open the chest ... T^T';
                     const offsetY = this.textLogs.length * 16;
                     const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -209,7 +209,7 @@ export default class Scene03 extends Phaser.Scene {
                 this.map.setTileIndexAt(14, 3, this.map.objectsLayer, 3600); // Close a chest
                 this.player.isMoving = false; // Player can move
 
-                const message = 'Closing the treasure chest ...';
+                const message = '[SYSTEM] Closing the treasure chest ...';
                 const offsetY = this.textLogs.length * 16;
                 const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
