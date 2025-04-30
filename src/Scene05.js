@@ -1,4 +1,4 @@
-// Scene04.js
+// Scene05.js
 import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
@@ -101,7 +101,7 @@ export default class Scene05 extends Phaser.Scene {
     }
 
     initializePlayer(data) {
-        const playerPosition = (this.portalDirection === 0) ? { x: 9, y: 0 } : { x: 9, y: 10 };
+        const playerPosition = (data.portalDirection === 0) ? { x: 9, y: 0 } : { x: 9, y: 10 };
         this.player = new player(this, playerPosition.x, playerPosition.y, data.playerDirection, scale);
         this.player.create();
         this.player.idleAnimation(data.playerDirection);
@@ -138,7 +138,7 @@ export default class Scene05 extends Phaser.Scene {
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
                 this.movePlayer(1, 0, tileX, tileY);
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
-                this.movePlayer(0, -1, tileX, tileY);
+                this.movePlayer(0, -1, tileX, tileY, 'scene-06', { portalDirection: 2, playerDirection : this.getDirection(0, -1), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {
                 this.movePlayer(-1, 0, tileX, tileY);
             } else {
@@ -153,7 +153,8 @@ export default class Scene05 extends Phaser.Scene {
 
         if (this.canMove(tileX + dx, tileY + dy)) {
             this.player.move(dx, dy);
-        } else if (dy === 1 && tileY === 10) { // Check for scene transition
+        } else if ((dy === 1 && tileY === 10) ||
+            (dy === -1 && tileY === 0)) { // Check for scene transition
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.scene.stop();
             this.scene.start(sceneKey, sceneData);
