@@ -48,7 +48,9 @@ export default class gameMap {
         })
 
         this.objectsLayer.forEachTile(tile => {
-            if ((tile.index >= 3487 && tile.index < 3493) ||
+            if ((tile.index >= 3148 && tile.index < 3154) ||
+                (tile.index >= 3261 && tile.index < 3267) ||
+                (tile.index >= 3487 && tile.index < 3493) ||
                 (tile.index >= 3600 && tile.index < 3606) ||
                 (tile.index >= 3826 && tile.index < 3832) ||
                 (tile.index >= 3939 && tile.index < 3945) ||
@@ -59,17 +61,24 @@ export default class gameMap {
                 (tile.index >= 5407 && tile.index < 5414) ||
                 (tile.index >= 5520 && tile.index < 5534) ||
                 (tile.index >= 6876 && tile.index < 6883) ||
+                (tile.index >= 6989 && tile.index < 6996) ||
                 (tile.index >= 8049 && tile.index < 8063) ||
                 (tile.index >= 8162 && tile.index < 8177) ||
                 (tile.index >= 8264 && tile.index < 8271) ||
                 (tile.index >= 8377 && tile.index < 8384)) {
                 tile.index += 1;
+            } else if ((tile.index >= 2941 && tile.index < 2955) ||
+                (tile.index >= 3054 && tile.index < 3068) ||
+                (tile.index >= 3167 && tile.index < 3181) ||
+                (tile.index >= 3280 && tile.index < 3294)) {    // Doors
+                tile.index += 2;
             } else if (tile.index === 4303 ||
                         tile.index === 4416 ||
                         tile.index === 4962 ||
                         tile.index === 5075 ||
                         tile.index === 5414 ||
                         tile.index === 6883 ||
+                        tile.index === 6996 ||
                         tile.index === 8271 ||
                         tile.index === 8384) {
                 tile.index -= 7; // Repeat animation
@@ -79,9 +88,9 @@ export default class gameMap {
                         tile.index === 8063 ||
                         tile.index === 8177) {
                 tile.index -= 14; // Repeat animation
-            } else if ((tile.index === 3493) || (tile.index === 3832)) {
+            } else if ((tile.index === 3154) || (tile.index === 3493) || (tile.index === 3832)) {
                 tile.index += 106;
-            } else if ((tile.index === 3606) || (tile.index === 3945)) {
+            } else if ((tile.index === 3267) || (tile.index === 3606) || (tile.index === 3945)) {
                 tile.index -= 120;
             } else if (tile.index === 8522) {
                 tile.index -= 21;
