@@ -157,7 +157,7 @@ export default class StartScene extends Phaser.Scene {
                 });
             }
 
-            const message = 'Notice: You can open the treasure chests with the keys throughout Dungeon to see my portfolio.';
+            const message = '[NOTICE] You can open the treasure chests with the keys throughout Dungeon to see my portfolio.';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 

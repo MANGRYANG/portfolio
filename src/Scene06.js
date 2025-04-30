@@ -129,7 +129,7 @@ export default class Scene06 extends Phaser.Scene {
                 (currentTileIndex >= 5522 && currentTileIndex <= 5527)) {
                     this.cameras.main.fadeOut(200, 0, 0, 0);
                     this.cameras.main.shake(200, 0.01);
-                    let message = "YOU DIED BY TRAP!! :( ";
+                    let message = "[SYSTEM] YOU DIED BY TRAP!! :( ";
                     let deathLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + 5, 'pixelFont', message, 16, 1);
                     this.time.addEvent({
                         delay: 200,
@@ -142,7 +142,7 @@ export default class Scene06 extends Phaser.Scene {
             } else if ((currentTileIndex >= 8501 && currentTileIndex <= 8522)) {
                 this.cameras.main.fadeOut(200, 0, 0, 0);
                 this.cameras.main.shake(200, 0.01);
-                let message = "YOU KILLED BY TINY SLIME :/ ";
+                let message = "[SYSTEM] YOU KILLED BY TINY SLIME :/ ";
                 let deathLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + 5, 'pixelFont', message, 16, 1);
                 this.time.addEvent({
                     delay: 200,
@@ -173,7 +173,7 @@ export default class Scene06 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = 'oak signpost message';
+            const message = '[NOTICE] Details about the action platformer game project built using DX11 can be found here.';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -196,7 +196,7 @@ export default class Scene06 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = 'steel signpost message';
+            const message = '[NOTICE] Details about the portfolio website project built using Phaser can be found here.';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -221,7 +221,7 @@ export default class Scene06 extends Phaser.Scene {
 
             this.player.isMoving = true; // Stop player's moving
 
-            const message = 'You found a red key!!';
+            const message = '[SYSTEM] You found a red key!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -243,7 +243,7 @@ export default class Scene06 extends Phaser.Scene {
 
             this.player.isMoving = true; // Stop player's moving
 
-            const message = 'You found a green key!!';
+            const message = '[SYSTEM] You found a green key!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -264,7 +264,7 @@ export default class Scene06 extends Phaser.Scene {
                     this.player.isMoving = true; // Stop player's moving
                     this.player.idleAnimation();
 
-                    const message = 'Opening the treasure chest ...';
+                    const message = '[SYSTEM] Opening the treasure chest ...';
                     const offsetY = this.textLogs.length * 16;
                     const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -272,7 +272,7 @@ export default class Scene06 extends Phaser.Scene {
                     newTextLog.typeCreate();
                     this.textLogs.push(newTextLog);
                 } else {  // When a player attempts to open a treasure chest without a red key
-                    const message = 'Unable to open the chest ... T^T';
+                    const message = '[SYSTEM] Unable to open the chest ... T^T';
                     const offsetY = this.textLogs.length * 16;
                     const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -285,7 +285,7 @@ export default class Scene06 extends Phaser.Scene {
                 this.map.setTileIndexAt(5, 4, this.map.objectsLayer, 3939); // Close a chest
                 this.player.isMoving = false; // Player can move
 
-                const message = 'Closing the treasure chest ...';
+                const message = '[SYSTEM] Closing the treasure chest ...';
                 const offsetY = this.textLogs.length * 16;
                 const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -307,7 +307,7 @@ export default class Scene06 extends Phaser.Scene {
                     this.player.isMoving = true; // Stop player's moving
                     this.player.idleAnimation();
 
-                    const message = 'Opening the treasure chest ...';
+                    const message = '[SYSTEM] Opening the treasure chest ...';
                     const offsetY = this.textLogs.length * 16;
                     const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -315,7 +315,7 @@ export default class Scene06 extends Phaser.Scene {
                     newTextLog.typeCreate();
                     this.textLogs.push(newTextLog);
                 } else {  // When a player attempts to open a treasure chest without a green key
-                    const message = 'Unable to open the chest ... T^T';
+                    const message = '[SYSTEM] Unable to open the chest ... T^T';
                     const offsetY = this.textLogs.length * 16;
                     const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -328,7 +328,7 @@ export default class Scene06 extends Phaser.Scene {
                 this.map.setTileIndexAt(14, 4, this.map.objectsLayer, 3261); // Close a chest
                 this.player.isMoving = false; // Player can move
 
-                const message = 'Closing the treasure chest ...';
+                const message = '[SYSTEM] Closing the treasure chest ...';
                 const offsetY = this.textLogs.length * 16;
                 const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
