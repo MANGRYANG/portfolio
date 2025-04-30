@@ -40,9 +40,10 @@ export default class gameMap {
         });
 
         this.frontsLayer.forEachTile(tile => {
-            if(tile.index >= 8151 && tile.index < 8158) {
+            if((tile.index >= 8151 && tile.index < 8158) ||
+                (tile.index >= 8264 && tile.index < 8271)) {
                 tile.index += 1;
-            } else if (tile.index === 8158) {
+            } else if (tile.index === 8158 || tile.index === 8271) {
                 tile.index -= 7;
             }
         })
@@ -64,7 +65,6 @@ export default class gameMap {
                 (tile.index >= 6989 && tile.index < 6996) ||
                 (tile.index >= 8049 && tile.index < 8063) ||
                 (tile.index >= 8162 && tile.index < 8177) ||
-                (tile.index >= 8264 && tile.index < 8271) ||
                 (tile.index >= 8377 && tile.index < 8384)) {
                 tile.index += 1;
             } else if ((tile.index >= 2941 && tile.index < 2955) ||
@@ -79,7 +79,6 @@ export default class gameMap {
                         tile.index === 5414 ||
                         tile.index === 6883 ||
                         tile.index === 6996 ||
-                        tile.index === 8271 ||
                         tile.index === 8384) {
                 tile.index -= 7; // Repeat animation
             } else if(tile.index >= 8501 && tile.index < 8522) {    // Slimes
