@@ -1,4 +1,4 @@
-// Scene02.js
+// Scene04.js
 import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
@@ -11,15 +11,15 @@ const playerRaiseURL = '../assets/characters/Raise.png';
 const playerFallingURL = '../assets/characters/Fall.png';
 const dungeonTilesURL = '../assets/Dungeon.png';
 const slimeTilesURL = '../assets/Slime.png';
-const map02URL = '../maps/Map02.json';
+const map05URL = '../maps/Map05.json';
 
 const pageWidth = 800;
 const pageHeight = 600;
 const scale = 2;
 
-export default class Scene02 extends Phaser.Scene {
+export default class Scene05 extends Phaser.Scene {
     constructor() {
-        super('scene-02');
+        super('scene-05');
         this.map = null;
         this.lastTimeSymbol = 0;
         this.tileSize = scale * 16;
@@ -33,7 +33,7 @@ export default class Scene02 extends Phaser.Scene {
         this.load.bitmapFont('pixelFont', titleFontPngURL, titleFontXmlURL);
         this.load.image('dungeon_tiles', dungeonTilesURL);
         this.load.image('slime_tiles', slimeTilesURL);
-        this.load.tilemapTiledJSON('map02', map02URL);
+        this.load.tilemapTiledJSON('map05', map05URL);
         this.load.spritesheet('playerIdle', playerIdleURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerWalk', playerWalkURL, { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('playerRaise', playerRaiseURL, { frameWidth: 32, frameHeight: 32 });
@@ -87,7 +87,7 @@ export default class Scene02 extends Phaser.Scene {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
         this.titleText = new text(this, pageWidth / 2, pageHeight / 4 - (16 * 5 + 8), 'pixelFont', "Mangryang's Dungeon", 64, 0);
         this.titleText.create();
-        this.map = new map(this, 'map02', scale);
+        this.map = new map(this, 'map05', scale);
         this.map.createMap();
         this.keyCollection = data.keyCollection;
         this.textLogs = [];
@@ -101,10 +101,7 @@ export default class Scene02 extends Phaser.Scene {
     }
 
     initializePlayer(data) {
-        const playerPosition = (data.portalDirection === 0) ? { x: 6, y: 0 } : 
-            ((data.portalDirection === 1) ? {x: 0, y: 6} : 
-            ((data.portalDirection === 2) ? {x: 5, y: 10}
-            : {x: 17, y: 2}));
+        const playerPosition = (this.portalDirection === 0) ? { x: 9, y: 0 } : { x: 9, y: 10 };
         this.player = new player(this, playerPosition.x, playerPosition.y, data.playerDirection, scale);
         this.player.create();
         this.player.idleAnimation(data.playerDirection);
@@ -125,6 +122,7 @@ export default class Scene02 extends Phaser.Scene {
 
         if (currentTimeSymbol !== this.lastTimeSymbol) {
             this.map.updateMap(currentTimeSymbol);
+
             this.lastTimeSymbol = currentTimeSymbol;
             this.handlePlayerMovement();
         }
@@ -136,15 +134,13 @@ export default class Scene02 extends Phaser.Scene {
             const tileY = this.player.y;
 
             if (this.cursors.down.isDown || this.s_Key.isDown) {
-                this.movePlayer(0, 1, tileX, tileY, 'scene-03', { portalDirection: 0, playerDirection : this.getDirection(0, 1), textLogs: this.textLogs, keyCollection: this.keyCollection });
+                this.movePlayer(0, 1, tileX, tileY, 'scene-02', { portalDirection: 3, playerDirection : this.getDirection(0, 1), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else if (this.cursors.right.isDown || this.d_Key.isDown) {
                 this.movePlayer(1, 0, tileX, tileY);
-            } else if ((this.cursors.up.isDown || this.w_Key.isDown) && tileY === 0) {
-                this.movePlayer(0, -1, tileX, tileY, 'scene-04', { portalDirection: 2, playerDirection : this.getDirection(0, -1), textLogs: this.textLogs, keyCollection: this.keyCollection });
             } else if (this.cursors.up.isDown || this.w_Key.isDown) {
-                this.movePlayer(0, -1, tileX, tileY, 'scene-05', { portalDirection: 2, playerDirection : this.getDirection(0, -1), textLogs: this.textLogs, keyCollection: this.keyCollection });
+                this.movePlayer(0, -1, tileX, tileY);
             } else if (this.cursors.left.isDown || this.a_Key.isDown) {
-                this.movePlayer(-1, 0, tileX, tileY, 'scene-01', { portalDirection: 3, playerDirection : this.getDirection(-1, 0), textLogs: this.textLogs, keyCollection: this.keyCollection });
+                this.movePlayer(-1, 0, tileX, tileY);
             } else {
                 this.player.idleAnimation();
             }
@@ -157,10 +153,7 @@ export default class Scene02 extends Phaser.Scene {
 
         if (this.canMove(tileX + dx, tileY + dy)) {
             this.player.move(dx, dy);
-        } else if ((dx === -1 && tileX === 0) ||
-            (dy === 1 && tileY === 10) ||
-            (dy === -1 && tileY === 0) ||
-            (dy === -1 && tileX === 17 && tileY === 2)) { // Check for scene transition
+        } else if (dy === 1 && tileY === 10) { // Check for scene transition
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.scene.stop();
             this.scene.start(sceneKey, sceneData);

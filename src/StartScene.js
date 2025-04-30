@@ -89,6 +89,7 @@ export default class StartScene extends Phaser.Scene {
         this.titleText.create();
         this.map = new map(this, 'startMap', scale);
         this.map.createMap();
+
         this.keyCollection = data.keyCollection ? data.keyCollection : [false, false, false, false, false];
         this.textLogs = [];
         if(data.textLogs != undefined) {

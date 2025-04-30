@@ -89,6 +89,7 @@ export default class Scene01 extends Phaser.Scene {
         this.titleText.create();
         this.map = new map(this, 'map01', scale);
         this.map.createMap();
+
         this.keyCollection = data.keyCollection;
         if(this.keyCollection[3]) {
             this.map.setTileIndexAt(13, 1, this.map.objectsLayer, 0);

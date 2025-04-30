@@ -24,6 +24,9 @@ export default class gameMap {
         this.decorationsLayer = map.createLayer("Decorations", tilesets, offsetX, offsetY).setScale(this.scale);
         this.wallsLayer = map.createLayer("Walls", tilesets, offsetX, offsetY).setScale(this.scale);
         this.objectsLayer = map.createLayer("Objects", tilesets, offsetX, offsetY).setScale(this.scale);
+        this.frontsLayer = map.createLayer("Fronts", tilesets, offsetX, offsetY).setScale(this.scale);
+
+        this.frontsLayer.setDepth(1);
     }
 
     
@@ -35,6 +38,14 @@ export default class gameMap {
                 tile.index -= 15; // Repeat animation
             }
         });
+
+        this.frontsLayer.forEachTile(tile => {
+            if(tile.index >= 8151 && tile.index < 8158) {
+                tile.index += 1;
+            } else if (tile.index === 8158) {
+                tile.index -= 7;
+            }
+        })
 
         this.objectsLayer.forEachTile(tile => {
             if ((tile.index >= 3487 && tile.index < 3493) ||
@@ -49,14 +60,18 @@ export default class gameMap {
                 (tile.index >= 5520 && tile.index < 5534) ||
                 (tile.index >= 6876 && tile.index < 6883) ||
                 (tile.index >= 8049 && tile.index < 8063) ||
-                (tile.index >= 8162 && tile.index < 8177)) {
+                (tile.index >= 8162 && tile.index < 8177) ||
+                (tile.index >= 8264 && tile.index < 8271) ||
+                (tile.index >= 8377 && tile.index < 8384)) {
                 tile.index += 1;
             } else if (tile.index === 4303 ||
                         tile.index === 4416 ||
                         tile.index === 4962 ||
                         tile.index === 5075 ||
                         tile.index === 5414 ||
-                        tile.index === 6883) {
+                        tile.index === 6883 ||
+                        tile.index === 8271 ||
+                        tile.index === 8384) {
                 tile.index -= 7; // Repeat animation
             } else if(tile.index >= 8501 && tile.index < 8522) {    // Slimes
                 tile.index += 3;
