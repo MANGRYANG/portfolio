@@ -271,6 +271,15 @@ export default class Scene06 extends Phaser.Scene {
                     let newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
                     newTextLog.typeCreate();
                     this.textLogs.push(newTextLog);
+
+                    // Update Portpolio Section
+                    const customPortfolioEvent = new CustomEvent('portfolioUpdated', {
+                        detail: {
+                            portfolioId: 3
+                        }
+                    });
+                    document.dispatchEvent(customPortfolioEvent);
+
                 } else {  // When a player attempts to open a treasure chest without a red key
                     const message = '[SYSTEM] Unable to open the chest ... T^T';
                     const offsetY = this.textLogs.length * 16;
@@ -292,6 +301,14 @@ export default class Scene06 extends Phaser.Scene {
                 let newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
                 newTextLog.typeCreate();
                 this.textLogs.push(newTextLog);
+
+                // Hide Portpolio Section
+                const customPortfolioEvent = new CustomEvent('portfolioUpdated', {
+                    detail: {
+                        portfolioId: -1
+                    }
+                });
+                document.dispatchEvent(customPortfolioEvent);
             }
 
         } else if (!this.interaction &&
@@ -314,6 +331,15 @@ export default class Scene06 extends Phaser.Scene {
                     let newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
                     newTextLog.typeCreate();
                     this.textLogs.push(newTextLog);
+
+                    // Update Portpolio Section
+                    const customPortfolioEvent = new CustomEvent('portfolioUpdated', {
+                        detail: {
+                            portfolioId: 4
+                        }
+                    });
+                    document.dispatchEvent(customPortfolioEvent);
+
                 } else {  // When a player attempts to open a treasure chest without a green key
                     const message = '[SYSTEM] Unable to open the chest ... T^T';
                     const offsetY = this.textLogs.length * 16;
@@ -335,6 +361,14 @@ export default class Scene06 extends Phaser.Scene {
                 let newTextLog = new text(this, (pageWidth / 2) - (16 * 9 * 2), newY, 'pixelFont', message, 16, 1);
                 newTextLog.typeCreate();
                 this.textLogs.push(newTextLog);
+
+                // Hide Portpolio Section
+                const customPortfolioEvent = new CustomEvent('portfolioUpdated', {
+                    detail: {
+                        portfolioId: -1
+                    }
+                });
+                document.dispatchEvent(customPortfolioEvent);
             }
 
         }
