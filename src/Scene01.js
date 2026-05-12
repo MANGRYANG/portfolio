@@ -164,7 +164,7 @@ export default class Scene01 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = '[NOTICE] Details about the board game project built using C++ can be found here.';
+            const message = '[NOTICE] Details about a custom OS project designed to run a simple game application can be found here.';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
