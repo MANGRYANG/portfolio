@@ -1,11 +1,13 @@
 // button.js
 const buttonContainer = document.getElementById('button');
 
+const base = import.meta.env.BASE_URL;
+
 const logos = {
-    linkedIn: '../assets/icons/linkedIn_icon.png',
-    github: '../assets/icons/github_icon.png',
-    blog: '../assets/icons/medium_icon.png',
-    youtube: '../assets/icons/youtube_icon.png',
+    linkedIn: `${base}assets/Icons/linkedIn_icon.png`,
+    github: `${base}assets/Icons/github_icon.png`,
+    blog: `${base}assets/Icons/medium_icon.png`,
+    youtube: `${base}assets/Icons/youtube_icon.png`,
 };
 
 const buttonForLinkedIn = document.createElement('button');
@@ -52,7 +54,7 @@ function buttonSetting(button, logoUrl) {
     const logo = document.createElement('img');
     logo.src = logoUrl;
     logo.alt = 'Logo';
-    logo.style.height = '100%';
+    logo.style.height = '75%';
 
     button.appendChild(logo);
 }

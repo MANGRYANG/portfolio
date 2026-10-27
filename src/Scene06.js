@@ -3,15 +3,17 @@ import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
 
-const titleFontPngURL = '../assets/font/font.png';
-const titleFontXmlURL = '../assets/font/font.xml';
-const playerIdleURL = '../assets/characters/Idle.png';
-const playerWalkURL = '../assets/characters/Walk.png';
-const playerRaiseURL = '../assets/characters/Raise.png';
-const playerFallingURL = '../assets/characters/Fall.png';
-const dungeonTilesURL = '../assets/Dungeon.png';
-const slimeTilesURL = '../assets/Slime.png';
-const map06URL = '../maps/Map06.json';
+const base = import.meta.env.BASE_URL;
+
+const titleFontPngURL = `${base}assets/Font/font.png`;
+const titleFontXmlURL = `${base}assets/Font/font.xml`;
+const playerIdleURL = `${base}assets/Characters/Idle.png`;
+const playerWalkURL = `${base}assets/Characters/Walk.png`;
+const playerRaiseURL = `${base}assets/Characters/Raise.png`;
+const playerFallingURL = `${base}assets/Characters/Fall.png`;
+const dungeonTilesURL = `${base}assets/Dungeon.png`;
+const slimeTilesURL = `${base}assets/Slime.png`;
+const map06URL = `${base}maps/Map06.json`;
 
 const pageWidth = 800;
 const pageHeight = 600;
@@ -90,6 +92,12 @@ export default class Scene06 extends Phaser.Scene {
         this.map = new map(this, 'map06', scale);
         this.map.createMap();
         this.keyCollection = data.keyCollection;
+        if (this.keyCollection[0]) {
+            this.map.setTileIndexAt(17, 8, this.map.objectsLayer, 0);
+        }
+        if (this.keyCollection[2]) {
+            this.map.setTileIndexAt(7, 1, this.map.objectsLayer, 0);
+        }
         this.textLogs = [];
         if(data.textLogs != undefined) {
             data.textLogs.forEach(textLog => {
@@ -136,7 +144,7 @@ export default class Scene06 extends Phaser.Scene {
                         callback: () => {
                             this.cameras.main.resetFX();
                             this.scene.stop();
-                            this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [false, false, false, false, false] });
+                            this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [...this.keyCollection] });
                         }
                     });
             } else if ((currentTileIndex >= 8501 && currentTileIndex <= 8522)) {
@@ -149,7 +157,7 @@ export default class Scene06 extends Phaser.Scene {
                     callback: () => {
                         this.cameras.main.resetFX();
                         this.scene.stop();
-                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [false, false, false, false, false] });
+                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [...this.keyCollection] });
                     }
                 });
             }
@@ -173,7 +181,7 @@ export default class Scene06 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = '[NOTICE] Details about the action platformer game project built using DX11 can be found here.';
+            const message = '[NOTICE] A new project is coming soon. Unlock this portfolio with the RED KEY!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -196,7 +204,7 @@ export default class Scene06 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = '[NOTICE] Details about the portfolio website project built using Phaser can be found here.';
+            const message = '[NOTICE] Portfolio: A game-based site built with Phaser 3. Unlock this portfolio with the GREEN KEY!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 

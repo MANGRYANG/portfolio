@@ -3,15 +3,17 @@ import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
 
-const titleFontPngURL = '../assets/font/font.png';
-const titleFontXmlURL = '../assets/font/font.xml';
-const playerIdleURL = '../assets/characters/Idle.png';
-const playerWalkURL = '../assets/characters/Walk.png';
-const playerRaiseURL = '../assets/characters/Raise.png';
-const playerFallingURL = '../assets/characters/Fall.png';
-const dungeonTilesURL = '../assets/Dungeon.png';
-const slimeTilesURL = '../assets/Slime.png';
-const map04URL = '../maps/Map04.json';
+const base = import.meta.env.BASE_URL;
+
+const titleFontPngURL = `${base}assets/Font/font.png`;
+const titleFontXmlURL = `${base}assets/Font/font.xml`;
+const playerIdleURL = `${base}assets/Characters/Idle.png`;
+const playerWalkURL = `${base}assets/Characters/Walk.png`;
+const playerRaiseURL = `${base}assets/Characters/Raise.png`;
+const playerFallingURL = `${base}assets/Characters/Fall.png`;
+const dungeonTilesURL = `${base}assets/Dungeon.png`;
+const slimeTilesURL = `${base}assets/Slime.png`;
+const map04URL = `${base}maps/Map04.json`;
 
 const pageWidth = 800;
 const pageHeight = 600;
@@ -90,6 +92,9 @@ export default class Scene04 extends Phaser.Scene {
         this.map = new map(this, 'map04', scale);
         this.map.createMap();
         this.keyCollection = data.keyCollection;
+        if (this.keyCollection[4]) {
+            this.map.setTileIndexAt(18, 5, this.map.objectsLayer, 0);
+        }
         this.textLogs = [];
         if(data.textLogs != undefined) {
             data.textLogs.forEach(textLog => {
@@ -136,7 +141,7 @@ export default class Scene04 extends Phaser.Scene {
                         callback: () => {
                             this.cameras.main.resetFX();
                             this.scene.stop();
-                            this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [false, false, false, false, false] });
+                            this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [...this.keyCollection] });
                         }
                     });
             } else if ((currentTileIndex >= 8501 && currentTileIndex <= 8522)) {
@@ -149,7 +154,7 @@ export default class Scene04 extends Phaser.Scene {
                     callback: () => {
                         this.cameras.main.resetFX();
                         this.scene.stop();
-                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [false, false, false, false, false] });
+                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [...this.keyCollection] });
                     }
                 });
             } else if ((currentTileIndex === 857 || currentTileIndex === 970 || currentTileIndex === 1083)) {
@@ -162,7 +167,7 @@ export default class Scene04 extends Phaser.Scene {
                         this.cameras.main.fadeOut(200, 0, 0, 0);
                         this.cameras.main.resetFX();
                         this.scene.stop();
-                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [false, false, false, false, false] });
+                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [...this.keyCollection] });
                     }
                 });
             }
@@ -186,7 +191,7 @@ export default class Scene04 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = '[NOTICE] Details about the simple platformer game project built using DX11 can be found here.';
+            const message = '[NOTICE] CppNetworkArena: A C++/Boost.Asio network game. Unlock this portfolio with the SILVER KEY!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
