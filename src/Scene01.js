@@ -166,7 +166,7 @@ export default class Scene01 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = '[NOTICE] Details about a custom OS project designed to run a simple game application can be found here.';
+            const message = '[NOTICE] PixelOS: A custom x86 OS running Pong. Unlock this portfolio with the GOLDEN KEY!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 

@@ -181,7 +181,7 @@ export default class Scene06 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = '[NOTICE] Details about the action platformer game project built using DX11 can be found here.';
+            const message = '[NOTICE] A new project is coming soon. Unlock this portfolio with the RED KEY!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
@@ -204,7 +204,7 @@ export default class Scene06 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = '[NOTICE] Details about the portfolio website project built using Phaser can be found here.';
+            const message = '[NOTICE] Portfolio: A game-based site built with Phaser 3. Unlock this portfolio with the GREEN KEY!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 

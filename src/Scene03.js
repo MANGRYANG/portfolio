@@ -147,7 +147,7 @@ export default class Scene03 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = '[NOTICE] Details about the roguelike-FPS game project built using Unreal Engine 5 can be found here.';
+            const message = '[NOTICE] GpuDrivenVFX: CPU/GPU particle simulation. Unlock this portfolio with the BLUE KEY!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 

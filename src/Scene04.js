@@ -191,7 +191,7 @@ export default class Scene04 extends Phaser.Scene {
 
             this.checkTextLogRenewal();
 
-            const message = '[NOTICE] Details about the simple platformer game project built using DX11 can be found here.';
+            const message = '[NOTICE] CppNetworkArena: A C++/Boost.Asio network game. Unlock this portfolio with the SILVER KEY!!';
             const offsetY = this.textLogs.length * 16;
             const newY = (pageHeight / 2) + (16 * 5 + 8) * 2 + 8 + offsetY + 5;
 
