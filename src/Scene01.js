@@ -141,7 +141,7 @@ export default class Scene01 extends Phaser.Scene {
                     callback: () => {
                         this.cameras.main.resetFX();
                         this.scene.stop();
-                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [false, false, false, false, false] });
+                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [...this.keyCollection] });
                     }
                 });
             }

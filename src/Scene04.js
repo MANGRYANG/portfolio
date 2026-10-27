@@ -92,6 +92,9 @@ export default class Scene04 extends Phaser.Scene {
         this.map = new map(this, 'map04', scale);
         this.map.createMap();
         this.keyCollection = data.keyCollection;
+        if (this.keyCollection[4]) {
+            this.map.setTileIndexAt(18, 5, this.map.objectsLayer, 0);
+        }
         this.textLogs = [];
         if(data.textLogs != undefined) {
             data.textLogs.forEach(textLog => {
@@ -138,7 +141,7 @@ export default class Scene04 extends Phaser.Scene {
                         callback: () => {
                             this.cameras.main.resetFX();
                             this.scene.stop();
-                            this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [false, false, false, false, false] });
+                            this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [...this.keyCollection] });
                         }
                     });
             } else if ((currentTileIndex >= 8501 && currentTileIndex <= 8522)) {
@@ -151,7 +154,7 @@ export default class Scene04 extends Phaser.Scene {
                     callback: () => {
                         this.cameras.main.resetFX();
                         this.scene.stop();
-                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [false, false, false, false, false] });
+                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [...this.keyCollection] });
                     }
                 });
             } else if ((currentTileIndex === 857 || currentTileIndex === 970 || currentTileIndex === 1083)) {
@@ -164,7 +167,7 @@ export default class Scene04 extends Phaser.Scene {
                         this.cameras.main.fadeOut(200, 0, 0, 0);
                         this.cameras.main.resetFX();
                         this.scene.stop();
-                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [false, false, false, false, false] });
+                        this.scene.start('start-scene', { portalDirection: undefined, playerDirection: undefined, textLogs: [deathLog], keyCollection: [...this.keyCollection] });
                     }
                 });
             }
