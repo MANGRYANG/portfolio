@@ -54,7 +54,7 @@ function buttonSetting(button, logoUrl) {
     const logo = document.createElement('img');
     logo.src = logoUrl;
     logo.alt = 'Logo';
-    logo.style.height = '100%';
+    logo.style.height = '75%';
 
     button.appendChild(logo);
 }
