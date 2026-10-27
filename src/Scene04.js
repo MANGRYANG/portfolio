@@ -3,15 +3,17 @@ import text from './Text.js';
 import map from './Map.js';
 import player from './Player.js';
 
-const titleFontPngURL = '../assets/font/font.png';
-const titleFontXmlURL = '../assets/font/font.xml';
-const playerIdleURL = '../assets/characters/Idle.png';
-const playerWalkURL = '../assets/characters/Walk.png';
-const playerRaiseURL = '../assets/characters/Raise.png';
-const playerFallingURL = '../assets/characters/Fall.png';
-const dungeonTilesURL = '../assets/Dungeon.png';
-const slimeTilesURL = '../assets/Slime.png';
-const map04URL = '../maps/Map04.json';
+const base = import.meta.env.BASE_URL;
+
+const titleFontPngURL = `${base}assets/Font/font.png`;
+const titleFontXmlURL = `${base}assets/Font/font.xml`;
+const playerIdleURL = `${base}assets/Characters/Idle.png`;
+const playerWalkURL = `${base}assets/Characters/Walk.png`;
+const playerRaiseURL = `${base}assets/Characters/Raise.png`;
+const playerFallingURL = `${base}assets/Characters/Fall.png`;
+const dungeonTilesURL = `${base}assets/Dungeon.png`;
+const slimeTilesURL = `${base}assets/Slime.png`;
+const map04URL = `${base}maps/Map04.json`;
 
 const pageWidth = 800;
 const pageHeight = 600;
